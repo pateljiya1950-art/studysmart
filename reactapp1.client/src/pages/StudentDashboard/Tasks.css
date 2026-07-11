@@ -1,0 +1,516 @@
+/* ============================================================
+   Tasks.css — Dark theme matching MentorLayout
+   ============================================================ */
+
+/* ── SHELL ─────────────────────────────────────────────────── */
+.tk-wrapper {
+  display: flex;
+  gap: 32px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 48px;
+  font-family: 'Inter', system-ui, sans-serif;
+  align-items: flex-start;
+}
+
+.tk-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tk-sidebar {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.tk-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.tk-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.tk-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary, #8b949e);
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
+/* ── STAT STRIP ──────────────────────────────────────────────── */
+.tk-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tk-stat {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: var(--bg-card, #161b22);
+  border: 1px solid var(--border, #30363d);
+  border-radius: var(--radius-md, 12px);
+  padding: 14px 18px;
+  flex: 1;
+  min-width: 120px;
+  transition: var(--transition, all 0.2s ease);
+}
+
+.tk-stat:hover {
+  border-color: var(--accent-glow, rgba(124, 58, 237, 0.35));
+  transform: translateY(-1px);
+}
+
+.tk-stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm, 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.tk-stat--indigo  .tk-stat-icon { background: var(--accent-soft, rgba(124,58,237,0.15));  color: var(--accent, #7c3aed); }
+.tk-stat--rose    .tk-stat-icon { background: var(--danger-soft, rgba(239,68,68,0.15));   color: var(--danger, #ef4444); }
+.tk-stat--emerald .tk-stat-icon { background: var(--success-soft, rgba(16,185,129,0.15)); color: var(--success, #10b981); }
+
+.tk-stat-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin: 0;
+  line-height: 1;
+}
+
+.tk-stat-lbl {
+  font-size: 11px;
+  color: var(--text-secondary, #8b949e);
+  font-weight: 500;
+  margin: 3px 0 0;
+}
+
+/* Progress bar stat */
+.tk-stat-progress {
+  flex: 2;
+  min-width: 180px;
+  background: var(--bg-card, #161b22);
+  border: 1px solid var(--border, #30363d);
+  border-radius: var(--radius-md, 12px);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tk-stat-progress-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tk-stat-progress-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #8b949e);
+}
+
+.tk-stat-progress-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent, #7c3aed);
+}
+
+.tk-progress-bar {
+  width: 100%;
+  height: 7px;
+  background: var(--border, #30363d);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tk-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent, #7c3aed), var(--accent-2, #06b6d4));
+  transition: width 0.7s ease;
+}
+
+/* ── CARD ────────────────────────────────────────────────────── */
+.tk-card {
+  background: var(--bg-card, #161b22);
+  border-radius: var(--radius-lg, 16px);
+  padding: 24px;
+  border: 1px solid var(--border, #30363d);
+  box-shadow: var(--shadow-card, 0 4px 24px rgba(0, 0, 0, 0.4));
+  transition: var(--transition, all 0.2s ease);
+}
+
+.tk-card:hover {
+  border-color: var(--accent-glow, rgba(124, 58, 237, 0.35));
+}
+
+.tk-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin: 0 0 18px;
+}
+
+/* ── FORM ────────────────────────────────────────────────────── */
+.tk-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.tk-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.tk-form-field--date { max-width: 200px; }
+
+.tk-form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #8b949e);
+}
+
+.tk-form-label span {
+  font-weight: 400;
+  color: var(--text-muted, #484f58);
+}
+
+.tk-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border, #30363d);
+  border-radius: var(--radius-sm, 8px);
+  font-size: 13.5px;
+  color: #fff;
+  background: #000;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+  color-scheme: dark;
+}
+
+.tk-input:focus {
+  border-color: var(--accent, #7c3aed);
+  box-shadow: none;
+}
+
+.tk-input::placeholder { color: var(--text-muted, #484f58); }
+
+/* Date input wrapper */
+.tk-input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.tk-input-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted, #484f58);
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tk-input--date { padding-left: 34px; }
+
+/* Add button */
+.tk-btn-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 22px;
+  background: linear-gradient(135deg, var(--accent, #7c3aed), #6d28d9);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition, all 0.2s ease);
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.3);
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.tk-btn-add:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+}
+
+.tk-btn-add:active { transform: translateY(0); }
+
+/* ── FILTER TABS ─────────────────────────────────────────────── */
+.tk-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.tk-filter-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid var(--border, #30363d);
+  background: transparent;
+  color: var(--text-secondary, #8b949e);
+  cursor: pointer;
+  transition: var(--transition, all 0.18s ease);
+  font-family: inherit;
+}
+
+.tk-filter-btn:hover {
+  border-color: var(--accent, #7c3aed);
+  color: var(--accent, #7c3aed);
+}
+
+.tk-filter-btn--active {
+  background: var(--accent-soft, rgba(124,58,237,0.15));
+  border-color: var(--accent, #7c3aed);
+  color: var(--accent, #7c3aed);
+}
+
+/* ── TASK LIST ───────────────────────────────────────────────── */
+.tk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Empty state */
+.tk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: var(--bg-card, #161b22);
+  border-radius: var(--radius-lg, 16px);
+  border: 1.5px dashed var(--border, #30363d);
+  text-align: center;
+  color: var(--text-secondary, #8b949e);
+}
+
+.tk-empty-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.tk-empty p {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary, #8b949e);
+  margin: 0 0 4px;
+}
+
+.tk-empty span {
+  font-size: 13px;
+  color: var(--text-muted, #484f58);
+}
+
+/* Task item */
+.tk-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card, #161b22);
+  border: 1px solid var(--border, #30363d);
+  border-radius: var(--radius-md, 12px);
+  padding: 16px 18px;
+  transition: var(--transition, all 0.2s ease);
+  animation: fadeIn 0.35s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tk-item:hover {
+  border-color: var(--accent-glow, rgba(124, 58, 237, 0.35));
+  transform: translateY(-1px);
+}
+
+.tk-item--done {
+  background: var(--bg-base, #0d1117);
+  border-color: var(--border-light, #21262d);
+  opacity: 0.7;
+}
+
+.tk-item--done:hover { transform: none; border-color: var(--border-light, #21262d); }
+
+/* Status dot */
+.tk-item-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.tk-item-dot--pending {
+  border: 2px solid var(--border, #30363d);
+  background: transparent;
+}
+
+.tk-item-dot--done {
+  background: var(--success, #10b981);
+  border: 2px solid var(--success, #10b981);
+  color: #fff;
+}
+
+/* Body */
+.tk-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tk-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tk-item-title--done {
+  color: var(--text-muted, #484f58);
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.tk-item-due {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--text-secondary, #8b949e);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Right side */
+.tk-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Status badge */
+.tk-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.tk-badge--pending { background: var(--warning-soft, rgba(245,158,11,0.15)); color: var(--warning, #f59e0b); border: 1px solid rgba(245,158,11,0.3); }
+.tk-badge--done    { background: var(--success-soft, rgba(16,185,129,0.15)); color: var(--success, #10b981); border: 1px solid rgba(16,185,129,0.3); }
+
+/* Complete button */
+.tk-btn-complete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--accent, #7c3aed);
+  color: var(--accent, #7c3aed);
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: var(--transition, all 0.18s ease);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.tk-btn-complete:hover {
+  background: var(--accent-soft, rgba(124,58,237,0.15));
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
+  transform: translateY(-1px);
+}
+
+.tk-btn-complete:active { transform: translateY(0); }
+
+/* Delete button */
+.tk-btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--danger, #ef4444);
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  transition: var(--transition, all 0.18s ease);
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.tk-btn-delete:hover {
+  background: var(--danger-soft, rgba(239,68,68,0.15));
+  border-color: var(--danger, #ef4444);
+  transform: translateY(-1px);
+}
+
+.tk-btn-delete:active { transform: translateY(0); }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .tk-wrapper { flex-direction: column; }
+  .tk-sidebar { width: 100%; }
+}
+
+@media (max-width: 700px) {
+  .tk-stats  { flex-direction: column; }
+  .tk-form   { flex-direction: column; }
+  .tk-form-field--date { max-width: 100%; }
+  .tk-item   { flex-wrap: wrap; }
+  .tk-item-right { width: 100%; justify-content: flex-end; }
+}

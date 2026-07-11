@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.student-profile-page {
+  min-height: 100vh;
+  background: var(--background-color, #f8fafc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.student-profile-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-xl, 20px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #000000;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.avatar-placeholder:hover {
+  transform: scale(1.05);
+}
+
+.avatar-initials {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.profile-header h2 {
+  margin: 0 0 8px 0;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.profile-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  border-left: 4px solid #10b981;
+  color: #10b981;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.student-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: 0.3px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 14px;
+  color: #0f172a;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.form-group input::placeholder {
+  color: #94a3b8;
+}
+
+.form-group input:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-group input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.student-profile-card button {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  border: none;
+}
+
+.student-profile-card .btn-primary {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.student-profile-card .btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.student-profile-card .btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.student-profile-card .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.student-profile-card .btn-secondary {
+  background: #ffffff;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.student-profile-card .btn-secondary:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-left-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+}

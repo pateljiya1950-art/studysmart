@@ -1,0 +1,294 @@
+/* ═══════════════════════════════════════════════════════════════
+   StudentSessions.css  — Student Session Dashboard Styles (ss-*)
+   Dark theme matching MentorLayout tokens via CSS vars overlay
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (student dark palette) ──────────────────── */
+.ss-page {
+  --ss-bg:          var(--bg-base);
+  --ss-card:        var(--bg-card);
+  --ss-card-live:   var(--bg-card-hover);
+  --ss-border:      var(--border);
+  --ss-accent:      var(--accent);
+  --ss-cyan:        var(--accent-2);
+  --ss-success:     var(--success);
+  --ss-danger:      var(--danger);
+  --ss-text:        var(--text-primary);
+  --ss-muted:       var(--text-muted);
+  --ss-radius:      14px;
+  --ss-transition:  all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 4px 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--ss-text);
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.ss-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ss-title    { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--ss-text); margin: 0; }
+.ss-subtitle { font-size: 14px; color: var(--ss-muted); margin: 4px 0 0; font-weight: 500; }
+
+/* ── Filter tabs ──────────────────────────────────────────── */
+.ss-filter-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--ss-card);
+  border: 1px solid var(--ss-border);
+  border-radius: 12px;
+  padding: 6px;
+}
+.ss-tab {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: transparent;
+  background: transparent;
+  color: var(--ss-muted);
+  cursor: pointer;
+  transition: var(--ss-transition);
+}
+.ss-tab:hover       { background: var(--border); color: var(--text-primary); }
+.ss-tab-active      {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  color: var(--ss-accent);
+}
+
+/* ── Cards grid ───────────────────────────────────────────── */
+.ss-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ── Single card ──────────────────────────────────────────── */
+.ss-card {
+  background: var(--ss-card);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: var(--ss-transition);
+  position: relative;
+  overflow: hidden;
+  animation: ssCardIn 0.35s ease both;
+}
+.ss-card:nth-child(1) { animation-delay: 0.05s; }
+.ss-card:nth-child(2) { animation-delay: 0.10s; }
+.ss-card:nth-child(3) { animation-delay: 0.15s; }
+.ss-card:nth-child(4) { animation-delay: 0.20s; }
+.ss-card:nth-child(5) { animation-delay: 0.25s; }
+.ss-card:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes ssCardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ss-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ss-accent), var(--ss-cyan));
+  opacity: 0.8;
+}
+
+.ss-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border-color: var(--accent-glow);
+}
+
+/* Live card glow */
+.ss-card-live {
+  background: var(--ss-bg);
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.04);
+}
+.ss-card-live::before {
+  background: linear-gradient(90deg, #ef4444, #fb7185);
+  opacity: 1;
+  animation: liveBarPulse 1.5s ease-in-out infinite;
+}
+@keyframes liveBarPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Live indicator chip ──────────────────────────────────── */
+.ss-live-indicator {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 99px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #ef4444;
+  letter-spacing: 1px;
+}
+.ss-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.6); }
+}
+
+/* ── Card top row ─────────────────────────────────────────── */
+.ss-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Countdown ────────────────────────────────────────────── */
+.ss-countdown {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ss-cyan);
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+/* ── Card title ───────────────────────────────────────────── */
+.ss-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ss-text);
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+  padding-right: 36px; /* space for live chip */
+  margin: 0;
+}
+
+/* ── Mentor chip ──────────────────────────────────────────── */
+.ss-mentor-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ss-muted);
+  font-weight: 500;
+}
+.ss-mentor-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ss-accent), var(--ss-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
+}
+
+/* ── Details ──────────────────────────────────────────────── */
+.ss-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--ss-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+.ss-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.ss-detail-icon  { font-size: 16px; margin-top: 1px; flex-shrink: 0; color: #484f58; }
+.ss-detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ss-muted); margin-bottom: 2px; display: block; }
+.ss-detail-val   { font-size: 13px; font-weight: 600; color: var(--ss-text); display: block; }
+
+/* ── Action / Join button ─────────────────────────────────── */
+.ss-action { margin-top: auto; }
+
+.ss-join-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--ss-transition);
+  letter-spacing: 0.2px;
+}
+
+.ss-join-active {
+  background: linear-gradient(135deg, var(--ss-success), #059669);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
+}
+.ss-join-active:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.45);
+}
+
+.ss-join-waiting {
+  background: transparent;
+  border: 1px solid var(--ss-border);
+  color: var(--ss-muted);
+  cursor: not-allowed;
+}
+
+.ss-join-ended {
+  background: transparent;
+  border: 1px dashed #21262d;
+  color: #484f58;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.ss-empty {
+  background: var(--ss-card);
+  border: 1.5px dashed var(--ss-border);
+  border-radius: 16px;
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--ss-muted);
+  text-align: center;
+  font-size: 15px;
+}
+
+.ss-empty p { margin: 0; font-weight: 600; }
+.ss-empty span { font-size: 13px; color: #484f58; }

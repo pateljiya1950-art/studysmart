@@ -1,0 +1,250 @@
+/* ═══════════════════════════════════════════════════════════════
+   Sessions.css  — Mentor Session Scheduling Styles (ms-*)
+   Inherits design tokens from MentorLayout.css
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Page wrapper ─────────────────────────────────────────── */
+.ms-page { display: flex; flex-direction: column; gap: 24px; }
+
+/* ── Page header ──────────────────────────────────────────── */
+.ms-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+.ms-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+.ms-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Form card ────────────────────────────────────────────── */
+.ms-form-card {
+  animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-color: var(--accent-glow) !important;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.12);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0);      }
+}
+
+.ms-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.ms-field        { display: flex; flex-direction: column; gap: 6px; }
+.ms-field-full   { grid-column: 1 / -1; }
+.ms-submit-row   { display: flex; justify-content: flex-end; padding-top: 8px; }
+
+/* ── Stats bar ────────────────────────────────────────────── */
+.ms-stat-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ms-stat {
+  flex: 1;
+  min-width: 120px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition);
+}
+.ms-stat:hover { transform: translateY(-2px); border-color: var(--accent-glow); }
+.ms-stat-icon  { font-size: 20px; }
+.ms-stat-val   { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+.ms-stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); }
+
+/* ── Session cards grid ───────────────────────────────────── */
+.ms-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ── Single session card ──────────────────────────────────── */
+.ms-session-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.ms-session-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.ms-card-before::before { background: var(--accent-2); }
+.ms-card-live::before   { background: linear-gradient(90deg, #ef4444, #ff6b6b);
+                          animation: livePulse 1.5s ease-in-out infinite; }
+.ms-card-ended::before  { background: var(--text-muted); }
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.ms-session-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+  border-color: var(--accent-glow);
+}
+
+.ms-card-live {
+  border-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.12);
+}
+
+/* ── Card top bar ─────────────────────────────────────────── */
+.ms-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Status badge (ssb) ───────────────────────────────────── */
+.ssb {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.ssb-upcoming {
+  background: var(--accent-2-soft);
+  color: var(--accent-2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+.ssb-live {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  animation: badgePulse 1.5s ease-in-out infinite;
+}
+.ssb-ended {
+  background: rgba(100, 116, 139, 0.15);
+  color: var(--text-muted);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+}
+
+/* ── Delete button ────────────────────────────────────────── */
+.ms-delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.4;
+  transition: var(--transition);
+  padding: 4px 6px;
+  border-radius: 6px;
+  line-height: 1;
+}
+.ms-delete-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: var(--danger-soft);
+}
+.ms-delete-btn:disabled { cursor: default; }
+
+/* ── Card title ───────────────────────────────────────────── */
+.ms-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+
+/* ── Meta rows ────────────────────────────────────────────── */
+.ms-card-meta { display: flex; flex-direction: column; gap: 8px; }
+.ms-meta-row  {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.ms-meta-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.ms-link {
+  color: var(--accent-2);
+  text-decoration: none;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: inline-block;
+}
+.ms-link:hover { text-decoration: underline; }
+
+/* ── Card actions ─────────────────────────────────────────── */
+.ms-card-actions { margin-top: auto; padding-top: 4px; }
+.ms-join-btn {
+  width: 100%;
+  justify-content: center;
+  text-decoration: none;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ms-disabled-btn {
+  width: 100%;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  justify-content: center;
+}
+
+/* ── Entry animation ──────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.ms-session-card {
+  animation: fadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.ms-session-card:nth-child(1) { animation-delay: 0.05s; }
+.ms-session-card:nth-child(2) { animation-delay: 0.10s; }
+.ms-session-card:nth-child(3) { animation-delay: 0.15s; }
+.ms-session-card:nth-child(4) { animation-delay: 0.20s; }
+.ms-session-card:nth-child(5) { animation-delay: 0.25s; }
+.ms-session-card:nth-child(6) { animation-delay: 0.30s; }

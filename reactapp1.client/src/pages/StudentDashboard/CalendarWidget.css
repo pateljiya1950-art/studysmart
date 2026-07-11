@@ -1,0 +1,28 @@
+.calendar-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.event {
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.event.task {
+  background: #6366f1;
+  color: white;
+}
+
+.event.session {
+  background: #10b981;
+  color: white;
+}
+
+.event.exam {
+  background: #ef4444;
+  color: white;
+}

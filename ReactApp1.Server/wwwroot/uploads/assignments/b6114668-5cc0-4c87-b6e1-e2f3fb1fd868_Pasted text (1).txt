@@ -1,0 +1,195 @@
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using ReactApp1.Server.DTOs;
+
+namespace ReactApp1.Server.Services
+{
+    public class AiService
+    {
+        private readonly HttpClient _httpClient;
+        private readonly string? _apiKey;
+
+        public AiService(HttpClient httpClient, IConfiguration config)
+        {
+            _httpClient = httpClient;
+            _apiKey = config["AiSettings:GeminiApiKey"];
+        }
+
+        // ================= AI QUESTION GENERATION =================
+        public async Task<List<QuestionCreateDto>> GenerateQuestionsAsync(string subject, string difficultyLevel, int count)
+        {
+            if (string.IsNullOrWhiteSpace(_apiKey))
+                return GetMockQuestions(subject, difficultyLevel);
+
+            string prompt = $@"
+Generate {count} exam questions about '{subject}' with difficulty '{difficultyLevel}'.
+
+Rules:
+- Mix MCQ and Subjective
+- Output ONLY valid JSON array
+- No explanation
+- No markdown
+
+Format:
+[
+  {{
+    ""type"": ""MCQ"",
+    ""difficultyLevel"": ""{difficultyLevel}"",
+    ""questionText"": ""Question here"",
+    ""optionA"": ""A"",
+    ""optionB"": ""B"",
+    ""optionC"": ""C"",
+    ""optionD"": ""D"",
+    ""correctAnswer"": ""A""
+  }},
+  {{
+    ""type"": ""Subjective"",
+    ""difficultyLevel"": ""{difficultyLevel}"",
+    ""questionText"": ""Explain something"",
+    ""correctAnswer"": ""keyword1, keyword2, keyword3""
+  }}
+]";
+
+            var result = await CallGemini<List<QuestionCreateDto>>(prompt);
+            return result ?? new List<QuestionCreateDto>();
+        }
+
+        // ================= SUBJECTIVE EVALUATION =================
+        public async Task<decimal> EvaluateSubjectiveAsync(string question, string expectedKeywords, string studentAnswer)
+        {
+            if (string.IsNullOrWhiteSpace(_apiKey))
+                return FallbackMockEvaluate(expectedKeywords, studentAnswer);
+
+            string prompt = $@"
+Evaluate this answer.
+
+Return ONLY JSON:
+{{ ""score"": 4.5 }}
+
+Question: {question}
+Expected: {expectedKeywords}
+Answer: {studentAnswer}
+";
+
+            try
+            {
+                var result = await CallGemini<AiScoreResponse>(prompt);
+                return result?.Score ?? FallbackMockEvaluate(expectedKeywords, studentAnswer);
+            }
+            catch
+            {
+                return FallbackMockEvaluate(expectedKeywords, studentAnswer);
+            }
+        }
+
+        // ================= GEMINI CORE CALL =================
+        private async Task<string> CallOpenAI(string prompt)
+        {
+            var apiKey = _apiKey; // use OpenAI key instead
+
+            var url = "https://api.openai.com/v1/chat/completions";
+
+            var requestBody = new
+            {
+                model = "gpt-4.1-mini",
+                messages = new[]
+                {
+            new { role = "user", content = prompt }
+        }
+            };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Add("Authorization", $"Bearer {apiKey}");
+
+            request.Content = new StringContent(
+                JsonSerializer.Serialize(requestBody),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient.SendAsync(request);
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception(responseText);
+
+            using var doc = JsonDocument.Parse(responseText);
+
+            return doc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+        }
+
+        // ================= CLEAN RESPONSE =================
+        private string CleanJson(string raw)
+        {
+            raw = raw.Trim();
+
+            if (raw.StartsWith("```"))
+            {
+                raw = raw.Replace("```json", "")
+                         .Replace("```", "")
+                         .Trim();
+            }
+
+            return raw;
+        }
+
+        // ================= MOCK DATA =================
+        private List<QuestionCreateDto> GetMockQuestions(string subject, string difficulty)
+        {
+            return new List<QuestionCreateDto>
+            {
+                new QuestionCreateDto
+                {
+                    Type = "MCQ",
+                    DifficultyLevel = difficulty,
+                    QuestionText = $"What is {subject}?",
+                    OptionA = "Option A",
+                    OptionB = "Option B",
+                    OptionC = "Option C",
+                    OptionD = "Option D",
+                    CorrectAnswer = "A"
+                },
+                new QuestionCreateDto
+                {
+                    Type = "Subjective",
+                    DifficultyLevel = difficulty,
+                    QuestionText = $"Explain {subject}",
+                    CorrectAnswer = "concept1, concept2, concept3"
+                }
+            };
+        }
+
+        // ================= FALLBACK SCORING =================
+        private decimal FallbackMockEvaluate(string expectedKeywords, string studentAnswer)
+        {
+            if (string.IsNullOrEmpty(studentAnswer) || string.IsNullOrEmpty(expectedKeywords))
+                return 0;
+
+            var keywords = expectedKeywords.Split(',')
+                .Select(k => k.Trim().ToLower());
+
+            var answer = studentAnswer.ToLower();
+
+            int match = keywords.Count(k => answer.Contains(k));
+
+            return match switch
+            {
+                >= 3 => 5,
+                2 => 3.5m,
+                1 => 2,
+                _ => 0.5m
+            };
+        }
+
+        private class AiScoreResponse
+        {
+            public decimal Score { get; set; }
+        }
+    }
+}

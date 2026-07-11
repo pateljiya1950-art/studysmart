@@ -1,0 +1,936 @@
+USE [studentdb]
+GO
+/****** Object:  Table [dbo].[__EFMigrationsHistory]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__EFMigrationsHistory](
+	[MigrationId] [nvarchar](150) NOT NULL,
+	[ProductVersion] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
+(
+	[MigrationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Analytics_Daily]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Analytics_Daily](
+	[analytics_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[date] [date] NULL,
+	[study_minutes] [int] NULL,
+	[completed_tasks] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[analytics_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Announcements]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Announcements](
+	[announcement_id] [int] IDENTITY(1,1) NOT NULL,
+	[admin_id] [int] NOT NULL,
+	[message] [nvarchar](max) NULL,
+	[created_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[announcement_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Assignment_Submissions]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Assignment_Submissions](
+	[submission_id] [int] IDENTITY(1,1) NOT NULL,
+	[assignment_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[submitted_at] [datetime2](7) NULL,
+	[file_path] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[submission_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Assignments]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Assignments](
+	[assignment_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[title] [nvarchar](200) NULL,
+	[due_date] [date] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+	[description] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[assignment_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Calendar_Events]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Calendar_Events](
+	[event_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[title] [nvarchar](200) NULL,
+	[event_type] [nvarchar](20) NULL,
+	[event_date] [date] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[event_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Daily_Reflection]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Daily_Reflection](
+	[reflection_id] [int] IDENTITY(1,1) NOT NULL,
+	[student_id] [int] NOT NULL,
+	[date] [date] NULL,
+	[mood] [nvarchar](10) NULL,
+	[challenges] [nvarchar](max) NULL,
+	[improvement_plan] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[reflection_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ExamAnswers]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamAnswers](
+	[answer_id] [int] IDENTITY(1,1) NOT NULL,
+	[submission_id] [int] NOT NULL,
+	[question_id] [int] NOT NULL,
+	[selected_option] [nvarchar](500) NULL,
+	[descriptive_answer] [nvarchar](max) NULL,
+	[score] [decimal](5, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[answer_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ExamAssignments]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamAssignments](
+	[assignment_id] [int] IDENTITY(1,1) NOT NULL,
+	[exam_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[assigned_by] [int] NOT NULL,
+	[due_date] [date] NOT NULL,
+	[status] [nvarchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[assignment_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ExamQuestions]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamQuestions](
+	[question_id] [int] IDENTITY(1,1) NOT NULL,
+	[exam_id] [int] NOT NULL,
+	[type] [nvarchar](50) NOT NULL,
+	[difficulty_level] [nvarchar](50) NOT NULL,
+	[question_text] [nvarchar](max) NOT NULL,
+	[option_a] [nvarchar](500) NULL,
+	[option_b] [nvarchar](500) NULL,
+	[option_c] [nvarchar](500) NULL,
+	[option_d] [nvarchar](500) NULL,
+	[correct_answer] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[question_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Exams]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Exams](
+	[exam_id] [int] IDENTITY(1,1) NOT NULL,
+	[title] [nvarchar](255) NOT NULL,
+	[subject] [nvarchar](255) NOT NULL,
+	[exam_date] [date] NOT NULL,
+	[duration] [int] NOT NULL,
+	[difficulty_level] [nvarchar](50) NULL,
+	[created_by] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[exam_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ExamSubmissions]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExamSubmissions](
+	[submission_id] [int] IDENTITY(1,1) NOT NULL,
+	[assignment_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[score] [decimal](5, 2) NULL,
+	[ai_score] [decimal](5, 2) NULL,
+	[violations_count] [int] NULL,
+	[submitted_at] [datetime2](7) NULL,
+	[cheating_violations] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[submission_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Feedback]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Feedback](
+	[feedback_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[feedback] [nvarchar](max) NULL,
+	[created_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[feedback_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Materials]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Materials](
+	[material_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[title] [nvarchar](200) NULL,
+	[file_path] [nvarchar](255) NULL,
+	[uploaded_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[material_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Availability]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Availability](
+	[availability_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[day_of_week] [nvarchar](10) NOT NULL,
+	[start_time] [time](7) NULL,
+	[end_time] [time](7) NULL,
+	[is_active] [bit] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[availability_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Performance]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Performance](
+	[mentor_perf_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[period_start] [date] NULL,
+	[period_end] [date] NULL,
+	[students_handled] [int] NULL,
+	[avg_student_productivity] [decimal](5, 2) NULL,
+	[feedback_count] [int] NULL,
+	[avg_student_rating] [decimal](3, 1) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[mentor_perf_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Requests]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Requests](
+	[request_id] [int] IDENTITY(1,1) NOT NULL,
+	[student_id] [int] NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[skill_id] [int] NOT NULL,
+	[request_status] [nvarchar](20) NULL,
+	[requested_at] [datetime2](7) NULL,
+	[responded_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[request_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Sessions]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Sessions](
+	[session_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[scheduled_datetime] [datetime2](7) NULL,
+	[session_status] [nvarchar](20) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+	[title] [nvarchar](200) NULL,
+	[session_date] [nvarchar](10) NULL,
+	[start_time] [nvarchar](5) NULL,
+	[end_time] [nvarchar](5) NULL,
+	[meeting_link] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[session_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Skills]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Skills](
+	[mentor_skill_id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[skill_id] [int] NOT NULL,
+	[proficiency_level] [nvarchar](20) NULL,
+	[experience_years] [int] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[mentor_skill_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentor_Student]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentor_Student](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[assigned_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Mentors]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mentors](
+	[mentor_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[department] [nvarchar](100) NULL,
+	[experience_years] [int] NULL,
+	[max_students] [int] NULL,
+	[availability_status] [bit] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[mentor_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Notes]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Notes](
+	[note_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[title] [nvarchar](200) NULL,
+	[content] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[note_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Notifications]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Notifications](
+	[notify_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[message] [nvarchar](255) NULL,
+	[is_read] [bit] NULL,
+	[created_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[notify_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Performance_Report]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Performance_Report](
+	[report_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[productivity_score] [decimal](5, 2) NULL,
+	[report_date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[report_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[QA_Messages]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[QA_Messages](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[student_id] [int] NOT NULL,
+	[sender_type] [varchar](20) NOT NULL,
+	[message_text] [nvarchar](max) NOT NULL,
+	[sent_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Student_Goals]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Student_Goals](
+	[goal_id] [int] IDENTITY(1,1) NOT NULL,
+	[student_id] [int] NOT NULL,
+	[goal_title] [nvarchar](150) NULL,
+	[target_tasks] [int] NULL,
+	[target_hours] [int] NULL,
+	[start_date] [date] NULL,
+	[end_date] [date] NULL,
+	[goal_status] [nvarchar](20) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[goal_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Student_Mentor_Feedback]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Student_Mentor_Feedback](
+	[feedback_id] [int] IDENTITY(1,1) NOT NULL,
+	[student_id] [int] NOT NULL,
+	[mentor_id] [int] NOT NULL,
+	[rating] [decimal](2, 1) NULL,
+	[comments] [nvarchar](max) NULL,
+	[created_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[feedback_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Students]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Students](
+	[student_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[course] [nvarchar](100) NULL,
+	[semester] [int] NULL,
+	[university] [nvarchar](150) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[student_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Study_Sessions]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Study_Sessions](
+	[session_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[subject] [nvarchar](100) NULL,
+	[duration_min] [int] NULL,
+	[session_date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[session_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Subjects_Skills]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Subjects_Skills](
+	[skill_id] [int] IDENTITY(1,1) NOT NULL,
+	[skill_name] [nvarchar](100) NOT NULL,
+	[skill_type] [nvarchar](20) NOT NULL,
+	[is_active] [bit] NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[skill_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Tasks]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Tasks](
+	[task_id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NOT NULL,
+	[title] [nvarchar](200) NULL,
+	[due_date] [date] NULL,
+	[status] [nvarchar](20) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+	[modified_at] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[task_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 06/04/2026 10:18:40 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[user_id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](100) NOT NULL,
+	[email] [nvarchar](100) NOT NULL,
+	[password] [nvarchar](255) NOT NULL,
+	[role] [nvarchar](20) NOT NULL,
+	[status] [bit] NULL,
+	[created_at] [datetime2](7) NULL,
+	[updated_at] [datetime2](7) NULL,
+	[created_by] [int] NULL,
+	[modified_by] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[user_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Announcements] ADD  DEFAULT (sysdatetime()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[Assignment_Submissions] ADD  DEFAULT (sysdatetime()) FOR [submitted_at]
+GO
+ALTER TABLE [dbo].[ExamAssignments] ADD  DEFAULT ('Pending') FOR [status]
+GO
+ALTER TABLE [dbo].[ExamQuestions] ADD  DEFAULT ('Medium') FOR [difficulty_level]
+GO
+ALTER TABLE [dbo].[Exams] ADD  DEFAULT ('Medium') FOR [difficulty_level]
+GO
+ALTER TABLE [dbo].[ExamSubmissions] ADD  DEFAULT ((0)) FOR [violations_count]
+GO
+ALTER TABLE [dbo].[ExamSubmissions] ADD  DEFAULT (getutcdate()) FOR [submitted_at]
+GO
+ALTER TABLE [dbo].[ExamSubmissions] ADD  DEFAULT ((0)) FOR [cheating_violations]
+GO
+ALTER TABLE [dbo].[Feedback] ADD  DEFAULT (sysdatetime()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[Materials] ADD  DEFAULT (sysdatetime()) FOR [uploaded_at]
+GO
+ALTER TABLE [dbo].[Mentor_Availability] ADD  DEFAULT ((1)) FOR [is_active]
+GO
+ALTER TABLE [dbo].[Mentor_Requests] ADD  DEFAULT ('Pending') FOR [request_status]
+GO
+ALTER TABLE [dbo].[Mentor_Requests] ADD  DEFAULT (sysdatetime()) FOR [requested_at]
+GO
+ALTER TABLE [dbo].[Mentor_Sessions] ADD  DEFAULT ('Scheduled') FOR [session_status]
+GO
+ALTER TABLE [dbo].[Mentor_Student] ADD  DEFAULT (sysdatetime()) FOR [assigned_at]
+GO
+ALTER TABLE [dbo].[Mentors] ADD  DEFAULT ((1)) FOR [availability_status]
+GO
+ALTER TABLE [dbo].[Notifications] ADD  DEFAULT ((0)) FOR [is_read]
+GO
+ALTER TABLE [dbo].[Notifications] ADD  DEFAULT (sysdatetime()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[QA_Messages] ADD  DEFAULT (sysutcdatetime()) FOR [sent_at]
+GO
+ALTER TABLE [dbo].[Student_Goals] ADD  DEFAULT ('Active') FOR [goal_status]
+GO
+ALTER TABLE [dbo].[Student_Mentor_Feedback] ADD  DEFAULT (sysdatetime()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[Subjects_Skills] ADD  DEFAULT ((1)) FOR [is_active]
+GO
+ALTER TABLE [dbo].[Tasks] ADD  DEFAULT ('Pending') FOR [status]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT ((1)) FOR [status]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT (sysdatetime()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[Analytics_Daily]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Announcements]  WITH CHECK ADD FOREIGN KEY([admin_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Announcements]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Announcements]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Assignment_Submissions]  WITH CHECK ADD FOREIGN KEY([assignment_id])
+REFERENCES [dbo].[Assignments] ([assignment_id])
+GO
+ALTER TABLE [dbo].[Assignment_Submissions]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Calendar_Events]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Calendar_Events]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Calendar_Events]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Daily_Reflection]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[ExamAnswers]  WITH CHECK ADD  CONSTRAINT [FK_ExamAnswers_Questions] FOREIGN KEY([question_id])
+REFERENCES [dbo].[ExamQuestions] ([question_id])
+GO
+ALTER TABLE [dbo].[ExamAnswers] CHECK CONSTRAINT [FK_ExamAnswers_Questions]
+GO
+ALTER TABLE [dbo].[ExamAnswers]  WITH CHECK ADD  CONSTRAINT [FK_ExamAnswers_Submissions] FOREIGN KEY([submission_id])
+REFERENCES [dbo].[ExamSubmissions] ([submission_id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExamAnswers] CHECK CONSTRAINT [FK_ExamAnswers_Submissions]
+GO
+ALTER TABLE [dbo].[ExamAssignments]  WITH CHECK ADD FOREIGN KEY([assigned_by])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[ExamAssignments]  WITH CHECK ADD FOREIGN KEY([exam_id])
+REFERENCES [dbo].[Exams] ([exam_id])
+GO
+ALTER TABLE [dbo].[ExamAssignments]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[ExamQuestions]  WITH CHECK ADD  CONSTRAINT [FK_ExamQuestions_Exams] FOREIGN KEY([exam_id])
+REFERENCES [dbo].[Exams] ([exam_id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExamQuestions] CHECK CONSTRAINT [FK_ExamQuestions_Exams]
+GO
+ALTER TABLE [dbo].[Exams]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[ExamSubmissions]  WITH CHECK ADD FOREIGN KEY([assignment_id])
+REFERENCES [dbo].[ExamAssignments] ([assignment_id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExamSubmissions]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Feedback]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Feedback]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Feedback]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Feedback]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Materials]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Materials]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Materials]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Availability]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Availability]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Availability]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Performance]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD FOREIGN KEY([skill_id])
+REFERENCES [dbo].[Subjects_Skills] ([skill_id])
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Mentor_Sessions]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Sessions]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Sessions]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Sessions]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Mentor_Skills]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Skills]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Skills]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Skills]  WITH CHECK ADD FOREIGN KEY([skill_id])
+REFERENCES [dbo].[Subjects_Skills] ([skill_id])
+GO
+ALTER TABLE [dbo].[Mentor_Student]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Student]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Mentor_Student]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentor_Student]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Mentors]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentors]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Mentors]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Notes]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Notifications]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Performance_Report]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[QA_Messages]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[QA_Messages]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Student_Goals]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Student_Goals]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Student_Goals]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Student_Mentor_Feedback]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Student_Mentor_Feedback]  WITH CHECK ADD FOREIGN KEY([mentor_id])
+REFERENCES [dbo].[Mentors] ([mentor_id])
+GO
+ALTER TABLE [dbo].[Student_Mentor_Feedback]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Student_Mentor_Feedback]  WITH CHECK ADD FOREIGN KEY([student_id])
+REFERENCES [dbo].[Students] ([student_id])
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD  CONSTRAINT [FK_Students_CreatedBy] FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Students] CHECK CONSTRAINT [FK_Students_CreatedBy]
+GO
+ALTER TABLE [dbo].[Students]  WITH CHECK ADD  CONSTRAINT [FK_Students_ModifiedBy] FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Students] CHECK CONSTRAINT [FK_Students_ModifiedBy]
+GO
+ALTER TABLE [dbo].[Study_Sessions]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Subjects_Skills]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Subjects_Skills]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Tasks]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Tasks]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Tasks]  WITH CHECK ADD FOREIGN KEY([user_id])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD FOREIGN KEY([created_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD FOREIGN KEY([modified_by])
+REFERENCES [dbo].[Users] ([user_id])
+GO
+ALTER TABLE [dbo].[Calendar_Events]  WITH CHECK ADD CHECK  (([event_type]='Session' OR [event_type]='Assignment' OR [event_type]='Exam' OR [event_type]='Task'))
+GO
+ALTER TABLE [dbo].[Daily_Reflection]  WITH CHECK ADD CHECK  (([mood]='Bad' OR [mood]='Average' OR [mood]='Good'))
+GO
+ALTER TABLE [dbo].[Mentor_Availability]  WITH CHECK ADD CHECK  (([day_of_week]='Sat' OR [day_of_week]='Fri' OR [day_of_week]='Thu' OR [day_of_week]='Wed' OR [day_of_week]='Tue' OR [day_of_week]='Mon'))
+GO
+ALTER TABLE [dbo].[Mentor_Requests]  WITH CHECK ADD CHECK  (([request_status]='Rejected' OR [request_status]='Accepted' OR [request_status]='Pending'))
+GO
+ALTER TABLE [dbo].[Mentor_Sessions]  WITH CHECK ADD CHECK  (([session_status]='Cancelled' OR [session_status]='Completed' OR [session_status]='Scheduled'))
+GO
+ALTER TABLE [dbo].[Mentor_Skills]  WITH CHECK ADD CHECK  (([proficiency_level]='Expert' OR [proficiency_level]='Intermediate' OR [proficiency_level]='Beginner'))
+GO
+ALTER TABLE [dbo].[Student_Goals]  WITH CHECK ADD CHECK  (([goal_status]='Failed' OR [goal_status]='Achieved' OR [goal_status]='Active'))
+GO
+ALTER TABLE [dbo].[Subjects_Skills]  WITH CHECK ADD CHECK  (([skill_type]='Skill' OR [skill_type]='Subject'))
+GO
+ALTER TABLE [dbo].[Tasks]  WITH CHECK ADD CHECK  (([status]='Completed' OR [status]='Pending'))
+GO
+ALTER TABLE [dbo].[Users]  WITH CHECK ADD CHECK  (([role]='admin' OR [role]='mentor' OR [role]='student'))
+GO

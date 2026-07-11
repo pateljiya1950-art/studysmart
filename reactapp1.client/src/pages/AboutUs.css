@@ -1,0 +1,121 @@
+/* ═══════════════════════════════════════════════════════════════
+   AboutUs.css
+═══════════════════════════════════════════════════════════════ */
+
+.about-main {
+  background: #fff;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  overflow-y: auto;
+}
+
+.about-content {
+  background: #f8fafc;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 4rem;
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  color: #f8fafc;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.about-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-text-block {
+  margin-bottom: 2rem;
+}
+
+.about-text-block h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #38bdf8;
+  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+}
+
+.about-text-block p {
+  line-height: 1.7;
+  color: #000000;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.about-text-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-text-block ul li {
+  color: #000;
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  padding-left: 0.3 rem;
+  position: relative;
+}
+
+.about-text-block ul li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #000;
+  font-weight: bold;
+}
+
+.about-text-block ul li strong {
+  color: #f8fafc;
+}
+
+.about-cta-btn {
+  display: block;
+  width: fit-content;
+  margin: 3rem auto 0;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #fff;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+}
+
+.about-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+}
+
+@media (max-width: 768px) {
+  .about-main {
+    padding: 1.5rem;
+    padding-top: 5rem;
+  }
+  .about-content {
+    padding: 2rem;
+  }
+  .about-title {
+    font-size: 2rem;
+  }
+}

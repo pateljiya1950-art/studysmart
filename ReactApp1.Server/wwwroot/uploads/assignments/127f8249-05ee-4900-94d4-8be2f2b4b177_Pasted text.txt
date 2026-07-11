@@ -1,0 +1,3266 @@
+STUDYSMART – COMPLETE PROJECT FLOW
+StudySmart is a mentor–student academic support system designed to help students manage their academic activities while receiving guidance from mentors. The system supports role-based access for Students, Mentors, and Admins and tracks productivity, assignments, study sessions, and mentorship interactions.
+
+1] System Access & Authentication Flow: 
+1.	User opens the StudySmart web application.
+2.	User registers by providing name, email, password, and role.
+3.	User details are stored in the Users table.
+4.	User logs in using credentials.
+5.	System validates login and redirects user based on role:
+o	Student Dashboard
+o	Mentor Dashboard
+o	Admin Dashboard
+2] Student Flow (Main System Flow)
+ Step 1: Student Profile Setup
+1.	After login, student completes academic profile.
+2.	Profile details are stored in the Students table.
+3.	Student accesses personalized dashboard.
+Step 2: Mentor Discovery & Request
+1.	Student selects a subject/skill they need help with.
+2.	System fetches mentors from Mentor_Skills table.
+3.	Student views mentor expertise and proficiency levels.
+4.	Student sends mentor request.
+5.	Request is stored in Mentor_Requests table.
+Step 3: Task Management
+1.	Student creates academic tasks with due dates.
+2.	Tasks are stored in Tasks table.
+3.	Student updates or completes tasks.
+4.	Completed tasks contribute to productivity analytics.
+Step 4: Study Session Tracking
+1.	Student starts study timer.
+2.	Study duration and subject are recorded.
+3.	Data is stored in Study_Sessions table.
+4.	Study time is used for productivity calculation.
+Step 5: Notes & Materials Management
+1.	Student creates notes for subjects.
+2.	Notes are stored in Notes table.
+3.	Student uploads study materials.
+4.	Materials are stored in Materials table.
+
+ Step 6: Exams, Assignments & Submissions
+1.	Student views upcoming exams.
+2.	Exam details are stored in Exams table.
+3.	Mentor assigns assignments.
+4.	Assignments are stored in Assignments table.
+5.	Student submits assignments.
+6.	Submissions are stored in Assignment_Submissions table.
+Step 7: Goal Setting & Self-Reflection
+1.	Student sets academic goals.
+2.	Goals are stored in Student_Goals table.
+3.	Student records daily reflections.
+4.	Reflections are stored in Daily_Reflection table.
+
+ Step 8: Student Feedback to Mentor
+1.  Student submits feedback for assigned mentor after sessions or assignments.
+2.  Feedback includes:
+•	Rating (1–5)
+•	Optional comments
+3.  Feedback is stored in Student_Mentor_Feedback table.
+4.  System ensures student can only submit feedback for mentors assigned to them in Mentor_Student table.
+	
+Step 9: Calendar & Notifications
+1.	System creates calendar events for:
+o	Tasks
+o	Exams
+o	Assignments
+o	Mentor sessions
+2.	Events are stored in Calendar_Events table.
+3.	Notifications are generated and stored in Notifications table.
+	
+ Step 10: Productivity & Analytics
+1.	System aggregates daily data:
+o	Completed tasks
+o	Study time
+2.	Daily analytics are stored in Analytics_Daily table.
+3.	Productivity score is calculated daily.
+4.	Score is stored in Performance_Report table.
+5.	Student views daily, weekly, and monthly reports.
+
+ Mentor Flow
+Step 11: Mentor Profile & Skills
+1.	Mentor logs in.
+2.	Mentor updates professional profile.
+3.	Mentor selects subjects/skills of expertise.
+4.	Data is stored in Mentor_Skills table.
+
+ Step 12: Mentor Availability & Sessions
+1.	Mentor defines available time slots.
+2.	Availability stored in Mentor_Availability table.
+3.	Mentor schedules sessions with students.
+4.	Sessions stored in Mentor_Sessions table.
+
+Step 13: Mentor Guidance & Feedback
+1.	Mentor reviews student performance reports.
+2.	Mentor assigns tasks and assignments.
+3.	Mentor provides feedback.
+4.	Feedback stored in Feedback table.
+4] Admin Flow
+ Step 14: User & System Management
+1.	Admin logs in.
+2.	Admin manages students and mentors.
+3.	Admin monitors mentor performance.
+4.	Admin performance data stored in Mentor_Performance table which now optionally includes aggregated student feedback ratings from Student_Mentor_Feedback.
+
+ Step 15: Announcements & Control
+1.	Admin creates announcements.
+2.	Announcements stored in Announcements table.
+3.	Notifications are sent to users.
+
+5️] System Automation (Background Processes)
+1.	Daily analytics generation.
+2.	Daily productivity score calculation.
+3.	Notification triggers for deadlines.
+4.	Performance summaries updated automatically now including optional student feedback aggregation for mentors.
+
+
+database name studentdb;
+
+/* ---------------- USERS ---------------- */
+
+CREATE TABLE Users (
+    user_id INT IDENTITY PRIMARY KEY,
+    name NVARCHAR(100) NOT NULL,
+    email NVARCHAR(100) UNIQUE NOT NULL,
+    password NVARCHAR(255) NOT NULL,
+    role NVARCHAR(20) NOT NULL
+        CHECK (role IN ('student','mentor','admin')),
+    status BIT DEFAULT 1,
+    created_at DATETIME2 DEFAULT SYSDATETIME(),
+    updated_at DATETIME2 NULL,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- STUDENTS ---------------- */
+
+CREATE TABLE Students (
+    student_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    course NVARCHAR(100),
+    semester INT,
+    university NVARCHAR(150),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- MENTORS ---------------- */
+
+CREATE TABLE Mentors (
+    mentor_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    department NVARCHAR(100),
+    experience_years INT,
+    max_students INT,
+    availability_status BIT DEFAULT 1,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- SUBJECTS / SKILLS ---------------- */
+
+CREATE TABLE Subjects_Skills (
+    skill_id INT IDENTITY PRIMARY KEY,
+    skill_name NVARCHAR(100) NOT NULL,
+    skill_type NVARCHAR(20) NOT NULL
+        CHECK (skill_type IN ('Subject','Skill')),
+    is_active BIT DEFAULT 1,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- MENTOR SKILLS ---------------- */
+
+CREATE TABLE Mentor_Skills (
+    mentor_skill_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    skill_id INT NOT NULL,
+    proficiency_level NVARCHAR(20)
+        CHECK (proficiency_level IN ('Beginner','Intermediate','Expert')),
+    experience_years INT,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (skill_id) REFERENCES Subjects_Skills(skill_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- MENTOR REQUESTS ---------------- */
+
+CREATE TABLE Mentor_Requests (
+    request_id INT IDENTITY PRIMARY KEY,
+    student_id INT NOT NULL,
+    mentor_id INT NOT NULL,
+    skill_id INT NOT NULL,
+    request_status NVARCHAR(20) DEFAULT 'Pending'
+        CHECK (request_status IN ('Pending','Accepted','Rejected')),
+    requested_at DATETIME2 DEFAULT SYSDATETIME(),
+    responded_at DATETIME2 NULL,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (skill_id) REFERENCES Subjects_Skills(skill_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- MENTOR-STUDENT ---------------- */
+
+CREATE TABLE Mentor_Student (
+    id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    student_id INT NOT NULL,
+    assigned_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- AVAILABILITY ---------------- */
+
+CREATE TABLE Mentor_Availability (
+    availability_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    day_of_week NVARCHAR(10) NOT NULL
+        CHECK (day_of_week IN ('Mon','Tue','Wed','Thu','Fri','Sat')),
+    start_time TIME,
+    end_time TIME,
+    is_active BIT DEFAULT 1,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- SESSIONS ---------------- */
+
+CREATE TABLE Mentor_Sessions (
+    session_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    student_id INT NOT NULL,
+    scheduled_datetime DATETIME2,
+    session_status NVARCHAR(20) DEFAULT 'Scheduled'
+        CHECK (session_status IN ('Scheduled','Completed','Cancelled')),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- TASKS ---------------- */
+
+CREATE TABLE Tasks (
+    task_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    title NVARCHAR(200),
+    due_date DATE,
+    status NVARCHAR(20) DEFAULT 'Pending'
+        CHECK (status IN ('Pending','Completed')),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- STUDY SESSIONS ---------------- */
+
+CREATE TABLE Study_Sessions (
+    session_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject NVARCHAR(100),
+    duration_min INT,
+    session_date DATE,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+/* ---------------- NOTES ---------------- */
+
+CREATE TABLE Notes (
+    note_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    title NVARCHAR(200),
+    content NVARCHAR(MAX),
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+/* ---------------- MATERIALS ---------------- */
+
+CREATE TABLE Materials (
+    material_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    title NVARCHAR(200),
+    file_path NVARCHAR(255),
+    uploaded_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- EXAMS ---------------- */
+
+CREATE TABLE Exams (
+    exam_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject NVARCHAR(100),
+    exam_date DATE,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- ASSIGNMENTS ---------------- */
+
+CREATE TABLE Assignments (
+    assignment_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    title NVARCHAR(200),
+    due_date DATE,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- ASSIGNMENT SUBMISSIONS ---------------- */
+
+CREATE TABLE Assignment_Submissions (
+    submission_id INT IDENTITY PRIMARY KEY,
+    assignment_id INT NOT NULL,
+    student_id INT NOT NULL,
+    submitted_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    FOREIGN KEY (assignment_id) REFERENCES Assignments(assignment_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
+);
+
+/* ---------------- FEEDBACK ---------------- */
+
+CREATE TABLE Feedback (
+    feedback_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    student_id INT NOT NULL,
+    feedback NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- ANNOUNCEMENTS ---------------- */
+
+CREATE TABLE Announcements (
+    announcement_id INT IDENTITY PRIMARY KEY,
+    admin_id INT NOT NULL,
+    message NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (admin_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- NOTIFICATIONS ---------------- */
+
+CREATE TABLE Notifications (
+    notify_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    message NVARCHAR(255),
+    is_read BIT DEFAULT 0,
+    created_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+/* ---------------- STUDENT GOALS ---------------- */
+
+CREATE TABLE Student_Goals (
+    goal_id INT IDENTITY PRIMARY KEY,
+    student_id INT NOT NULL,
+    goal_title NVARCHAR(150),
+    target_tasks INT,
+    target_hours INT,
+    start_date DATE,
+    end_date DATE,
+    goal_status NVARCHAR(20) DEFAULT 'Active'
+        CHECK (goal_status IN ('Active','Achieved','Failed')),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- DAILY REFLECTION ---------------- */
+
+CREATE TABLE Daily_Reflection (
+    reflection_id INT IDENTITY PRIMARY KEY,
+    student_id INT NOT NULL,
+    date DATE,
+    mood NVARCHAR(10)
+        CHECK (mood IN ('Good','Average','Bad')),
+    challenges NVARCHAR(MAX),
+    improvement_plan NVARCHAR(MAX),
+
+    FOREIGN KEY (student_id) REFERENCES Students(student_id)
+);
+
+/* ---------------- CALENDAR EVENTS ---------------- */
+
+CREATE TABLE Calendar_Events (
+    event_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    title NVARCHAR(200),
+    event_type NVARCHAR(20)
+        CHECK (event_type IN ('Task','Exam','Assignment','Session')),
+    event_date DATE,
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+/* ---------------- ANALYTICS DAILY ---------------- */
+
+CREATE TABLE Analytics_Daily (
+    analytics_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    date DATE,
+    study_minutes INT,
+    completed_tasks INT,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+/* ---------------- PERFORMANCE REPORT ---------------- */
+
+CREATE TABLE Performance_Report (
+    report_id INT IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    productivity_score DECIMAL(5,2),
+    report_date DATE,
+
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+/* ---------------- MENTOR PERFORMANCE ---------------- */
+
+CREATE TABLE Mentor_Performance (
+    mentor_perf_id INT IDENTITY PRIMARY KEY,
+    mentor_id INT NOT NULL,
+    period_start DATE,
+    period_end DATE,
+    students_handled INT,
+    avg_student_productivity DECIMAL(5,2),
+    feedback_count INT,
+    avg_student_rating DECIMAL(3,1),
+
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id)
+);
+
+/* ---------------- STUDENT-MENTOR FEEDBACK ---------------- */
+
+CREATE TABLE Student_Mentor_Feedback (
+    feedback_id INT IDENTITY PRIMARY KEY,
+    student_id INT NOT NULL,
+    mentor_id INT NOT NULL,
+    rating DECIMAL(2,1),
+    comments NVARCHAR(MAX),
+    created_at DATETIME2 DEFAULT SYSDATETIME(),
+
+    created_by INT NULL,
+    modified_by INT NULL,
+    modified_at DATETIME2 NULL,
+
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (mentor_id) REFERENCES Mentors(mentor_id),
+    FOREIGN KEY (created_by) REFERENCES Users(user_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id)
+);
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Student;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/tasks")]
+    [Authorize(Roles = "student")]
+    public class TasksController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public TasksController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // ================= GET TASKS =================
+        [HttpGet]
+        public async System.Threading.Tasks.Task<IActionResult> GetTasks()
+        {
+            var tasks = await _context.Tasks
+                .Where(t => t.UserId == UserId)
+                .OrderByDescending(t => t.DueDate)
+                .ToListAsync();
+
+            return Ok(tasks);
+        }
+
+        // ================= ADD TASK =================
+        [HttpPost]
+        public async System.Threading.Tasks.Task<IActionResult> AddTask([FromBody] TaskCreateDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest("Title is required");
+
+            var task = new ReactApp1.Server.Models.Task
+            {
+                UserId = UserId,
+                Title = dto.Title,
+                DueDate = dto.DueDate.HasValue
+                    ? DateOnly.FromDateTime(dto.DueDate.Value)
+                    : null,
+                Status = "Pending"
+            };
+
+            _context.Tasks.Add(task);
+            await _context.SaveChangesAsync();
+
+            return Ok(task);
+        }
+
+        // ================= COMPLETE TASK =================
+        [HttpPut("{id}/complete")]
+        public async System.Threading.Tasks.Task<IActionResult> CompleteTask(int id)
+        {
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t => t.TaskId == id && t.UserId == UserId);
+
+            if (task == null)
+                return NotFound();
+
+            task.Status = "Completed";
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // ================= DELETE TASK =================
+        [HttpDelete("{id}")]
+        public async System.Threading.Tasks.Task<IActionResult> DeleteTask(int id)
+        {
+            var task = await _context.Tasks
+                .FirstOrDefaultAsync(t => t.TaskId == id && t.UserId == UserId);
+
+            if (task == null)
+                return NotFound();
+
+            _context.Tasks.Remove(task);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using ReactApp1.Server.Services;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/study-sessions")]
+    [Authorize(Roles = "student")]
+    public class StudySessionsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudySessionsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // START SESSION
+        [HttpPost("start")]
+        public async Task<IActionResult> Start()
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            var session = new StudySession
+            {
+                UserId = UserId,
+                SessionDate = today,
+                DurationMin = 0
+            };
+
+            _context.StudySessions.Add(session);
+            await _context.SaveChangesAsync();
+
+            return Ok(session);
+        }
+
+        // STOP SESSION
+        [HttpPut("{id}/stop")]
+        public async Task<IActionResult> Stop(int id, [FromBody] int minutes)
+        {
+            var session = await _context.StudySessions
+                .FirstOrDefaultAsync(s => s.SessionId == id && s.UserId == UserId);
+
+            if (session == null)
+                return NotFound();
+
+            session.DurationMin = minutes;
+
+            await _context.SaveChangesAsync();
+
+            await AnalyticsService.UpdateDailyAnalytics(_context, UserId);
+
+            return Ok();
+        }
+    }
+}                Mood = dto.Mood,
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using ReactApp1.Server.DTOs.Student;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/notes")]
+    [Authorize(Roles = "student")]
+    public class StudentNotesController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentNotesController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // ================= GET ALL NOTES =================
+        [HttpGet]
+        public async Task<IActionResult> GetNotes()
+        {
+            var notes = await _context.Notes
+                .Where(n => n.UserId == UserId)
+                .OrderByDescending(n => n.NoteId)
+                .Select(n => new
+                {
+                    n.NoteId,
+                    n.Title,
+                    n.Content
+                })
+                .ToListAsync();
+
+            return Ok(notes);
+        }
+
+        // ================= CREATE NOTE =================
+        [HttpPost]
+        public async Task<IActionResult> CreateNote([FromBody] NoteCreateDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest(new { message = "Title is required" });
+
+            var note = new Note
+            {
+                UserId = UserId,
+                Title = dto.Title,
+                Content = dto.Content
+            };
+
+            _context.Notes.Add(note);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                note.NoteId,
+                note.Title,
+                note.Content
+            });
+        }
+
+        // ================= DELETE NOTE =================
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNote(int id)
+        {
+            var note = await _context.Notes
+                .FirstOrDefaultAsync(n => n.NoteId == id && n.UserId == UserId);
+
+            if (note == null)
+                return NotFound(new { message = "Note not found" });
+
+            _context.Notes.Remove(note);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Note deleted successfully" });
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Mentor;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student")]
+    [Authorize(Roles = "student")]
+    public class StudentMentorRequestController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentMentorRequestController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int GetUserId()
+        {
+            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(claim))
+                throw new Exception("User ID not found in token");
+
+            return int.Parse(claim);
+        }
+
+        // GET SKILLS
+        [HttpGet("skills")]
+        public async Task<IActionResult> GetSkills()
+        {
+            var skills = await _context.SubjectsSkills
+                .Where(s => s.IsActive)
+                .Select(s => new
+                {
+                    s.SkillId,
+                    s.SkillName
+                })
+                .ToListAsync();
+
+            return Ok(skills);
+        }
+
+        // GET MENTORS BY SKILL
+        [HttpGet("mentors/{skillId}")]
+        public async Task<IActionResult> GetMentors(int skillId)
+        {
+            var mentors = await _context.MentorSkills
+                .Include(ms => ms.Mentor)
+                .ThenInclude(m => m.User)
+                .Where(ms => ms.SkillId == skillId)
+                .Select(ms => new
+                {
+                    mentorId = ms.Mentor.MentorId,
+                    name = ms.Mentor.User.Name,
+                    proficiencyLevel = ms.ProficiencyLevel,
+                    experienceYears = ms.ExperienceYears
+                })
+                .ToListAsync();
+
+            return Ok(mentors);
+        }
+
+        // SEND MENTOR REQUEST
+        [HttpPost("mentor-requests")]
+        public async Task<IActionResult> SendRequest([FromBody] MentorRequestDto dto)
+        {
+            var userId = GetUserId();
+
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            if (student == null)
+                return BadRequest("Student not found");
+
+            var request = new MentorRequest
+            {
+                StudentId = student.StudentId,
+                MentorId = dto.MentorId,
+                SkillId = dto.SkillId,
+                RequestStatus = "Pending",
+                RequestedAt = DateTime.Now
+            };
+
+            _context.MentorRequests.Add(request);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Request sent successfully" });
+        }
+
+        // RECOMMENDED MENTORS
+        [HttpGet("recommended-mentors")]
+        public async Task<IActionResult> GetRecommendedMentors()
+        {
+            var mentors = await _context.MentorSkills
+                .Include(ms => ms.Mentor)
+                .ThenInclude(m => m.User)
+                .Select(ms => new
+                {
+                    mentorId = ms.Mentor.MentorId,
+                    name = ms.Mentor.User.Name,
+                    proficiencyLevel = ms.ProficiencyLevel,
+                    experienceYears = ms.ExperienceYears
+                })
+                .ToListAsync();
+
+            var feedbacks = await _context.StudentMentorFeedbacks.ToListAsync();
+
+            var recommended = mentors
+                .Select(m => new
+                {
+                    m.mentorId,
+                    m.name,
+                    m.proficiencyLevel,
+                    m.experienceYears,
+
+                    score =
+                        (m.experienceYears * 2) +
+                        (feedbacks
+                            .Where(f => f.MentorId == m.mentorId)
+                            .Average(f => (double?)f.Rating) ?? 0)
+                })
+                .OrderByDescending(m => m.score)
+                .Take(5)
+                .ToList();
+
+            return Ok(recommended);
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Student;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/feedback")]
+    [Authorize(Roles = "student")]
+    public class StudentMentorFeedbackController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentMentorFeedbackController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitFeedback(StudentMentorFeedbackDto dto)
+        {
+            if (dto.Rating < 1 || dto.Rating > 5)
+                return BadRequest("Rating must be between 1 and 5");
+
+            var studentId = await _context.Students
+                .Where(s => s.UserId == UserId)
+                .Select(s => s.StudentId)
+                .FirstOrDefaultAsync();
+
+            if (studentId == 0)
+                return BadRequest("Student profile not found");
+
+            bool assigned = await _context.MentorStudents.AnyAsync(ms =>
+                ms.StudentId == studentId &&
+                ms.MentorId == dto.MentorId);
+
+            if (!assigned)
+                return Forbid("Mentor not assigned to this student");
+
+            bool alreadyGiven = await _context.StudentMentorFeedbacks.AnyAsync(f =>
+                f.StudentId == studentId &&
+                f.MentorId == dto.MentorId);
+
+            if (alreadyGiven)
+                return Conflict("Feedback already submitted");
+
+            _context.StudentMentorFeedbacks.Add(new StudentMentorFeedback
+            {
+                StudentId = studentId,
+                MentorId = dto.MentorId,
+                Rating = dto.Rating,
+                Comments = dto.Comments,
+                CreatedBy = UserId
+            });
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/discovery")]
+    [Authorize(Roles = "student")]
+    public class StudentMentorDiscoveryController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentMentorDiscoveryController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/student/discovery/skills
+        [HttpGet("skills")]
+        public async Task<IActionResult> GetSkills()
+        {
+
+            var skills = await _context.SubjectsSkills
+                .Where(s => s.IsActive == true)
+                .Select(s => new
+                {
+                    s.SkillId,
+                    s.SkillName,
+                    s.SkillType
+                })
+                .ToListAsync();
+
+            return Ok(skills);
+        }
+
+        // GET: api/student/discovery/mentors/5
+        [HttpGet("mentors/{skillId}")]
+        public async Task<IActionResult> GetMentors(int skillId)
+        {
+
+            var mentors = await _context.MentorSkills
+                .Where(ms => ms.SkillId == skillId)
+                .Select(ms => new
+                {
+                    mentorId = ms.Mentor.MentorId,
+                    name = ms.Mentor.User.Name,
+                    proficiencyLevel = ms.ProficiencyLevel,
+                    experienceYears = ms.ExperienceYears
+                })
+                .ToListAsync();
+
+            return Ok(mentors);
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/materials")]
+    [Authorize(Roles = "student")]
+    public class StudentMaterialsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentMaterialsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> GetMaterials()
+        {
+            var materials = await _context.Materials
+                .Where(m => m.UserId == UserId)
+                .OrderByDescending(m => m.UploadedAt)
+                .ToListAsync();
+
+            return Ok(materials);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddMaterial(Material dto)
+        {
+            var material = new Material
+            {
+                UserId = UserId,
+                Title = dto.Title,
+                FilePath = dto.FilePath,
+                CreatedBy = UserId
+            };
+
+            _context.Materials.Add(material);
+            await _context.SaveChangesAsync();
+
+            return Ok(material);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMaterial(int id)
+        {
+            var material = await _context.Materials
+                .FirstOrDefaultAsync(m => m.MaterialId == id && m.UserId == UserId);
+
+            if (material == null)
+                return NotFound();
+
+            _context.Materials.Remove(material);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/goals")]
+    [Authorize(Roles = "student")]
+    public class StudentGoalsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentGoalsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        private async Task<int> GetStudentId()
+        {
+            var student = await _context.Students
+                .FirstAsync(s => s.UserId == UserId);
+
+            return student.StudentId;
+        }
+
+        // GET ALL GOALS
+        [HttpGet]
+        public async Task<IActionResult> GetGoals()
+        {
+            int studentId = await GetStudentId();
+
+            var goals = await _context.StudentGoals
+                .Where(g => g.StudentId == studentId)
+                .OrderByDescending(g => g.StartDate)
+                .ToListAsync();
+
+            return Ok(goals);
+        }
+
+        // CREATE GOAL
+        [HttpPost]
+        public async Task<IActionResult> CreateGoal(StudentGoal dto)
+        {
+            int studentId = await GetStudentId();
+
+            var goal = new StudentGoal
+            {
+                StudentId = studentId,
+                GoalTitle = dto.GoalTitle,
+                TargetTasks = dto.TargetTasks,
+                TargetHours = dto.TargetHours,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                GoalStatus = "Active",
+                CreatedBy = UserId
+            };
+
+            _context.StudentGoals.Add(goal);
+            await _context.SaveChangesAsync();
+
+            return Ok(goal);
+        }
+
+        // UPDATE GOAL STATUS
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+        {
+            int studentId = await GetStudentId();
+
+            var goal = await _context.StudentGoals
+                .FirstOrDefaultAsync(g => g.GoalId == id && g.StudentId == studentId);
+
+            if (goal == null)
+                return NotFound();
+
+            goal.GoalStatus = status;
+            goal.ModifiedBy = UserId;
+            goal.ModifiedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/exams")]
+    [Authorize(Roles = "student")]
+    public class StudentExamsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentExamsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> GetExams()
+        {
+            var exams = await _context.Exams
+                .Where(e => e.UserId == UserId)
+                .OrderBy(e => e.ExamDate)
+                .ToListAsync();
+
+            return Ok(exams);
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Student;
+using ReactApp1.Server.Models;
+using ReactApp1.Server.Services;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student")]
+    [Authorize(Roles = "student")]
+    public class StudentController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        // ================= GET LOGGED IN USER ID =================
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // ================= CHECK IF PROFILE EXISTS =================
+        [HttpGet("has-profile")]
+        public async Task<IActionResult> HasProfile()
+        {
+            bool exists = await _context.Students
+                .AnyAsync(s => s.UserId == UserId);
+
+            return Ok(new { hasProfile = exists });
+        }
+
+        // ================= GET PROFILE =================
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var profile = await _context.Students
+                .Where(s => s.UserId == UserId)
+                .Select(s => new StudentProfileDto
+                {
+                    Course = s.Course,
+                    Semester = s.Semester,
+                    University = s.University
+                })
+                .FirstOrDefaultAsync();
+
+            return Ok(profile ?? new StudentProfileDto());
+        }
+
+        // ================= CREATE OR UPDATE PROFILE =================
+        [HttpPost("profile")]
+        public async Task<IActionResult> SaveProfile(StudentProfileDto dto)
+        {
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserId == UserId);
+
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = dto.Course,
+                    Semester = dto.Semester,
+                    University = dto.University,
+                    CreatedBy = UserId
+                };
+
+                _context.Students.Add(student);
+            }
+            else
+            {
+                student.Course = dto.Course;
+                student.Semester = dto.Semester;
+                student.University = dto.University;
+                student.ModifiedBy = UserId;
+                student.ModifiedAt = DateTime.Now;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // ================= DASHBOARD =================
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboard()
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            await AnalyticsService.UpdateDailyAnalytics(_context, userId);
+
+            var profile = await _context.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => new { u.Name })
+                .FirstAsync();
+
+            int completedTasks = await _context.Tasks
+                .CountAsync(t => t.UserId == userId && t.Status == "Completed");
+
+            int pendingTasks = await _context.Tasks
+                .CountAsync(t => t.UserId == userId && t.Status == "Pending");
+
+            int studyMinutesToday = await _context.StudySessions
+                .Where(s => s.UserId == userId && s.SessionDate == today)
+                .SumAsync(s => (int?)s.DurationMin) ?? 0;
+
+            var performance = await _context.PerformanceReports
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.ReportDate == today);
+
+            decimal productivityScore = performance?.ProductivityScore ?? 0;
+
+            return Ok(new
+            {
+                profile,
+                completedTasks,
+                pendingTasks,
+                studyMinutesToday,
+                productivityScore
+            });
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/assignments")]
+    [Authorize(Roles = "student")]
+    public class StudentAssignmentsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentAssignmentsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        private async Task<int> GetStudentId()
+        {
+            var student = await _context.Students
+                .FirstAsync(s => s.UserId == UserId);
+
+            return student.StudentId;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAssignments()
+        {
+            var assignments = await _context.Assignments
+                .Include(a => a.Mentor)
+                .OrderBy(a => a.DueDate)
+                .ToListAsync();
+
+            return Ok(assignments);
+        }
+
+        [HttpPost("{assignmentId}/submit")]
+        public async Task<IActionResult> Submit(int assignmentId)
+        {
+            int studentId = await GetStudentId();
+
+            var submission = new AssignmentSubmission
+            {
+                AssignmentId = assignmentId,
+                StudentId = studentId,
+                SubmittedAt = DateTime.UtcNow
+            };
+
+            _context.AssignmentSubmissions.Add(submission);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Student;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/student/analytics")]
+    [Authorize(Roles = "student")]
+    public class StudentAnalyticsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public StudentAnalyticsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet("weekly")]
+        public async Task<IActionResult> Weekly()
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var weekStart = today.AddDays(-7);
+
+            var data = await _context.AnalyticsDailies
+                .Where(a => a.UserId == UserId && a.Date >= weekStart)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                totalStudyMinutes = data.Sum(x => x.StudyMinutes),
+                totalCompletedTasks = data.Sum(x => x.CompletedTasks),
+                averageProductivityScore =
+                    data.Any()
+                    ? await _context.PerformanceReports
+                        .Where(p => p.UserId == UserId && p.ReportDate >= weekStart)
+                        .AverageAsync(p => (decimal?)p.ProductivityScore) ?? 0
+                    : 0
+            });
+        }
+
+        [HttpGet("monthly")]
+        public async Task<IActionResult> Monthly()
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var monthStart = new DateOnly(today.Year, today.Month, 1);
+
+            var data = await _context.AnalyticsDailies
+                .Where(a => a.UserId == UserId && a.Date >= monthStart)
+                .ToListAsync();
+
+            return Ok(new
+            {
+                totalStudyMinutes = data.Sum(x => x.StudyMinutes),
+                totalCompletedTasks = data.Sum(x => x.CompletedTasks),
+                averageProductivityScore =
+                    data.Any()
+                    ? await _context.PerformanceReports
+                        .Where(p => p.UserId == UserId && p.ReportDate >= monthStart)
+                        .AverageAsync(p => (decimal?)p.ProductivityScore) ?? 0
+                    : 0
+            });
+        }
+    }
+}
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/students")]
+    [Authorize(Roles = "mentor")]
+    public class MentorStudentsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorStudentsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m => m.UserId == UserId);
+
+            var students = await _context.MentorStudents
+                .Where(ms => ms.MentorId == mentor.MentorId)
+                .Select(ms => new
+                {
+                    ms.Student.StudentId,
+                    name = ms.Student.User.Name,
+                    ms.Student.Course,
+                    ms.Student.Semester
+                })
+                .ToListAsync();
+
+            return Ok(students);
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Mentor;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/skills")]
+    [Authorize(Roles = "mentor")]
+    public class MentorSkillsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorSkillsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        //private async Task<int> GetMentorId()
+        //{
+        //    return await _context.Mentors
+        //        .Where(m => m.UserId == UserId)
+        //        .Select(m => m.MentorId)
+        //        .FirstOrDefaultAsync();
+        //}
+
+        [HttpGet("{skillId}")]
+        public async Task<IActionResult> GetMentors(int skillId)
+        {
+            var mentors = await _context.MentorSkills
+                .Where(ms => ms.SkillId == skillId)
+                .Select(ms => new {
+                    ms.Mentor.MentorId,
+                    MentorName = ms.Mentor.User.Name,
+                    Proficiency = ms.ProficiencyLevel
+                })
+                .ToListAsync();
+
+            return Ok(mentors);
+        }
+    }
+
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Mentor;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/sessions")]
+    [Authorize(Roles = "mentor")]
+    public class MentorSessionsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorSessionsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // ================= SCHEDULE SESSION =================
+        [HttpPost]
+        public async Task<IActionResult> Schedule([FromBody] ScheduleSessionDto dto)
+        {
+            if (dto.StudentId <= 0)
+                return BadRequest("Invalid student");
+
+            if (dto.DateTime <= DateTime.UtcNow)
+                return BadRequest("Session time must be in the future");
+
+            var mentorId = await _context.Mentors
+                .Where(m => m.UserId == UserId)
+                .Select(m => (int?)m.MentorId)
+                .FirstOrDefaultAsync();
+
+            if (mentorId == null)
+                return BadRequest("Mentor profile not found");
+
+            var session = new MentorSession
+            {
+                MentorId = mentorId.Value,
+                StudentId = dto.StudentId,
+                ScheduledDatetime = dto.DateTime,
+                SessionStatus = "Scheduled",
+                CreatedBy = UserId
+            };
+
+            _context.MentorSessions.Add(session);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Session scheduled successfully" });
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.DTOs.Mentor;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/requests")]
+    [Authorize(Roles = "mentor")]
+    public class MentorRequestsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorRequestsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        // ================= GET PENDING REQUESTS =================
+        [HttpGet]
+        public async Task<IActionResult> GetRequests()
+        {
+            var mentorId = await _context.Mentors
+                .Where(m => m.UserId == UserId)
+                .Select(m => m.MentorId)
+                .FirstOrDefaultAsync();
+
+            if (mentorId == 0)
+                return BadRequest("Mentor profile not found");
+
+            var requests = await _context.MentorRequests
+                .Where(r => r.MentorId == mentorId && r.RequestStatus == "Pending")
+                .Select(r => new
+                {
+                    r.RequestId,
+                    StudentName = r.Student.User.Name,
+                    Skill = r.Skill.SkillName
+                })
+                .ToListAsync();
+
+            return Ok(requests);
+        }
+
+        // ================= ACCEPT / REJECT =================
+        [HttpPost("action")]
+        public async Task<IActionResult> Respond([FromBody] MentorRequestActionDto dto)
+        {
+            var request = await _context.MentorRequests
+                .FirstOrDefaultAsync(r => r.RequestId == dto.RequestId);
+
+            if (request == null)
+                return NotFound();
+
+            request.RequestStatus = dto.Action;
+            request.RespondedAt = DateTime.UtcNow;
+
+            if (dto.Action == "Accepted")
+            {
+                _context.MentorStudents.Add(new MentorStudent
+                {
+                    MentorId = request.MentorId,
+                    StudentId = request.StudentId,
+                    CreatedBy = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!)
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/dashboard")]
+    [Authorize(Roles = "mentor")]
+    public class MentorDashboardController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorDashboardController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var mentor = await _context.Mentors
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(m => m.UserId == UserId);
+
+            if (mentor == null)
+                return BadRequest("Mentor profile not found");
+
+            int totalStudents = await _context.MentorStudents
+                .CountAsync(ms => ms.MentorId == mentor.MentorId);
+
+            int pendingRequests = await _context.MentorRequests
+                .CountAsync(r => r.MentorId == mentor.MentorId && r.RequestStatus == "Pending");
+
+            int upcomingSessions = await _context.MentorSessions
+                .CountAsync(s => s.MentorId == mentor.MentorId && s.SessionStatus == "Scheduled");
+
+            decimal avgRating = await _context.StudentMentorFeedbacks
+                .Where(f => f.MentorId == mentor.MentorId)
+                .AverageAsync(f => (decimal?)f.Rating) ?? 0;
+
+            return Ok(new
+            {
+                profile = new { name = mentor.User.Name },
+                totalStudents,
+                pendingRequests,
+                upcomingSessions,
+                avgRating
+            });
+        }
+    }
+}using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/availability")]
+    [Authorize(Roles = "mentor")]
+    public class MentorAvailabilityController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorAvailabilityController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m => m.UserId == UserId);
+
+            var slots = await _context.MentorAvailabilities
+                .Where(a => a.MentorId == mentor.MentorId)
+                .ToListAsync();
+
+            return Ok(slots);
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/availability")]
+    [Authorize(Roles = "mentor")]
+    public class MentorAvailabilityController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorAvailabilityController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m => m.UserId == UserId);
+
+            var slots = await _context.MentorAvailabilities
+                .Where(a => a.MentorId == mentor.MentorId)
+                .ToListAsync();
+
+            return Ok(slots);
+        }
+    }
+}
+ using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/mentor/analytics")]
+    [Authorize(Roles = "mentor")]
+    public class MentorAnalyticsController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public MentorAnalyticsController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        private int UserId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var mentor = await _context.Mentors
+                .FirstOrDefaultAsync(m => m.UserId == UserId);
+
+            var performance = await _context.MentorPerformances
+                .Where(p => p.MentorId == mentor.MentorId)
+                .OrderByDescending(p => p.PeriodStart)
+                .FirstOrDefaultAsync();
+
+            return Ok(performance);
+        }
+    }
+}
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReactApp1.Server.Models;
+using System.Security.Claims;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/calendar")]
+    [Authorize]
+    public class CalendarController : ControllerBase
+    {
+        private readonly StudentdbContext _context;
+
+        public CalendarController(StudentdbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEvents()
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var events = await _context.CalendarEvents
+                .Where(e => e.UserId == userId)
+                .Select(e => new
+                {
+                    e.Title,
+                    e.EventType,
+                    e.EventDate
+                })
+                .ToListAsync();
+
+            return Ok(events);
+        }
+    }
+}
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp1.Server.DTOs;
+using ReactApp1.Server.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace ReactApp1.Server.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
+    {
+        private readonly StudentdbContext _context;// database access
+        private readonly IConfiguration _config;// read JWT settings from appsettings.json
+        private readonly PasswordHasher<User> _hasher = new(); // secure password
+
+        public AuthController(StudentdbContext context, IConfiguration config)
+        {
+            _context = context;
+            _config = config;
+        }
+
+        // ========================= REGISTER =========================
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            if (dto == null ||
+                string.IsNullOrWhiteSpace(dto.Name) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Invalid input");
+            }
+
+            var email = dto.Email.Trim().ToLower();
+            // check duplicate email 
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+                return BadRequest("Email already exists");
+
+            var role = (dto.Role ?? "student").ToLower();
+
+            if (role == "admin")
+                return BadRequest("Admin registration not allowed");
+
+            if (role != "student" && role != "mentor")
+                return BadRequest("Invalid role");
+
+           
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = email,
+                Role = role,
+                Status = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            user.Password = _hasher.HashPassword(user, dto.Password);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok("Registered successfully");
+        }
+
+        // ========================= LOGIN =========================
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            if (dto == null ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password))
+            {
+                return BadRequest("Invalid input");
+            }
+
+            var email = dto.Email.Trim().ToLower();
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email && u.Status == true);
+
+            if (user == null)
+                return Unauthorized("Invalid email or password");
+
+            var result = _hasher.VerifyHashedPassword(
+                user, user.Password, dto.Password);
+
+            if (result == PasswordVerificationResult.Failed)
+                return Unauthorized("Invalid email or password");
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("role", user.Role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // unique token id
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
+            );
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2), // generate token is valid for 2 hours
+                signingCredentials: new SigningCredentials(
+                    key, SecurityAlgorithms.HmacSha256)
+            );
+            // react recives the token and role
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                role = user.Role
+            });
+        }
+
+        // ========================= GET USERS (DEV / ADMIN) =========================
+        [AllowAnonymous]
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _context.Users
+                .AsNoTracking()
+                .Select(u => new
+                {
+                    u.UserId,
+                    u.Name,
+                    u.Email,
+                    u.Role,
+                    u.Status,
+                    u.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+    }
+}
+import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Assignments() {
+  const [assignments, setAssignments] = useState([]);
+
+  useEffect(() => {
+    loadAssignments();
+  }, []);
+
+  const loadAssignments = async () => {
+    const data = await authFetch("/student/assignments");
+    setAssignments(data);
+  };
+
+  const submitAssignment = async (id) => {
+    await authFetch(`/student/assignments/${id}/submit`, {
+      method: "POST"
+    });
+
+    alert("Submitted!");
+  };
+
+  return (
+    <div>
+      <h3>Assignments</h3>
+
+      {assignments.map(a => (
+        <div key={a.assignmentId}>
+          <p>{a.title}</p>
+          <p>Due: {a.dueDate}</p>
+          <button onClick={() => submitAssignment(a.assignmentId)}>
+            Submit
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import { getCalendarEvents } from "../../services/calendarApi";
+import "./CalendarWidget.css";
+
+export default function CalendarWidget() {
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    getCalendarEvents().then(setEvents);
+  }, []);
+
+  const tileContent = ({ date }) => {
+    const dayEvents = events.filter(
+      e => new Date(e.eventDate).toDateString() === date.toDateString()
+    );
+
+    return dayEvents.map((e, i) => (
+      <div key={i} className={`event ${e.eventType.toLowerCase()}`}>
+        {e.title}
+      </div>
+    ));
+  };
+
+  return (
+    <div className="calendar-card">
+      <h4>Calendar</h4>
+      <Calendar tileContent={tileContent} />
+    </div>
+  );
+}
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell
+} from "recharts";
+import "./Charts.css";
+
+export default function Charts({ stats }) {
+  const lineData = [
+    { name: "Tasks", value: stats.completedTasks },
+    { name: "Pending", value: stats.pendingTasks }
+  ];
+
+  const donutData = [
+    { name: "Completed", value: stats.completedTasks },
+    { name: "Pending", value: stats.pendingTasks }
+  ];
+
+  const COLORS = ["#4f46e5", "#e5e7eb"];
+
+  return (
+    <div className="charts">
+      <div className="chart-card">
+        <h4>Task Progress</h4>
+        <LineChart width={350} height={220} data={lineData}>
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="value" stroke="#4f46e5" />
+        </LineChart>
+      </div>
+
+      <div className="chart-card">
+        <h4>Completion</h4>
+        <PieChart width={250} height={220}>
+          <Pie
+            data={donutData}
+            dataKey="value"
+            innerRadius={60}
+            outerRadius={90}
+          >
+            {donutData.map((_, i) => (
+              <Cell key={i} fill={COLORS[i]} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </div>
+    </div>
+  );
+}
+import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Exams() {
+  const [exams, setExams] = useState([]);
+
+  useEffect(() => {
+    loadExams();
+  }, []);
+
+  const loadExams = async () => {
+    const data = await authFetch("/student/exams");
+    setExams(data);
+  };
+
+  return (
+    <div>
+      <h3>Upcoming Exams</h3>
+
+      {exams.map(exam => (
+        <div key={exam.examId}>
+          <p>{exam.subject}</p>
+          <p>{exam.examDate}</p>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Goals() {
+  const [goals, setGoals] = useState([]);
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    loadGoals();
+  }, []);
+
+  const loadGoals = async () => {
+    const data = await authFetch("/student/goals");
+    setGoals(data);
+  };
+
+  const createGoal = async (e) => {
+    e.preventDefault();
+
+    await authFetch("/student/goals", {
+      method: "POST",
+      body: JSON.stringify({
+        goalTitle: title,
+        targetTasks: 5,
+        targetHours: 10,
+        startDate: new Date(),
+        endDate: new Date()
+      })
+    });
+
+    setTitle("");
+    loadGoals();
+  };
+
+  return (
+    <div>
+      <h3>Goals</h3>
+
+      <form onSubmit={createGoal}>
+        <input
+          placeholder="Goal title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <button>Create</button>
+      </form>
+
+      {goals.map(goal => (
+        <div key={goal.goalId}>
+          <p>{goal.goalTitle} - {goal.goalStatus}</p>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Materials() {
+  const [materials, setMaterials] = useState([]);
+  const [title, setTitle] = useState("");
+  const [filePath, setFilePath] = useState("");
+
+  useEffect(() => {
+    loadMaterials();
+  }, []);
+
+  const loadMaterials = async () => {
+    const data = await authFetch("/student/materials");
+    setMaterials(data);
+  };
+
+  const addMaterial = async (e) => {
+    e.preventDefault();
+
+    await authFetch("/student/materials", {
+      method: "POST",
+      body: JSON.stringify({ title, filePath })
+    });
+
+    setTitle("");
+    setFilePath("");
+    loadMaterials();
+  };
+
+  const deleteMaterial = async (id) => {
+    await authFetch(`/student/materials/${id}`, {
+      method: "DELETE"
+    });
+
+    loadMaterials();
+  };
+
+  return (
+    <div>
+      <h3>Materials</h3>
+
+      <form onSubmit={addMaterial}>
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <input
+          placeholder="File Path"
+          value={filePath}
+          onChange={e => setFilePath(e.target.value)}
+        />
+        <button>Add</button>
+      </form>
+
+      {materials.map(m => (
+        <div key={m.materialId}>
+          <p>{m.title}</p>
+          <button onClick={() => deleteMaterial(m.materialId)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Notes() {
+  const [notes, setNotes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    loadNotes();
+  }, []);
+
+  const loadNotes = async () => {
+    const data = await authFetch("/student/notes");
+    setNotes(data);
+  };
+
+  const addNote = async (e) => {
+    e.preventDefault();
+
+    await authFetch("/student/notes", {
+      method: "POST",
+      body: JSON.stringify({ title, content })
+    });
+
+    setTitle("");
+    setContent("");
+    loadNotes();
+  };
+
+  const deleteNote = async (id) => {
+    await authFetch(`/student/notes/${id}`, {
+      method: "DELETE"
+    });
+
+    loadNotes();
+  };
+
+  return (
+    <div>
+      <h3>Notes</h3>
+
+      <form onSubmit={addNote}>
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <textarea
+          placeholder="Content"
+          value={content}
+          onChange={e => setContent(e.target.value)}
+        />
+        <button>Add</button>
+      </form>
+
+      {notes.map(note => (
+        <div key={note.noteId}>
+          <h4>{note.title}</h4>
+          <p>{note.content}</p>
+          <button onClick={() => deleteNote(note.noteId)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Notes() {
+  const [notes, setNotes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    loadNotes();
+  }, []);
+
+  const loadNotes = async () => {
+    const data = await authFetch("/student/notes");
+    setNotes(data);
+  };
+
+  const addNote = async (e) => {
+    e.preventDefault();
+
+    await authFetch("/student/notes", {
+      method: "POST",
+      body: JSON.stringify({ title, content })
+    });
+
+    setTitle("");
+    setContent("");
+    loadNotes();
+  };
+
+  const deleteNote = async (id) => {
+    await authFetch(`/student/notes/${id}`, {
+      method: "DELETE"
+    });
+
+    loadNotes();
+  };
+
+  return (
+    <div>
+      <h3>Notes</h3>
+
+      <form onSubmit={addNote}>
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <textarea
+          placeholder="Content"
+          value={content}
+          onChange={e => setContent(e.target.value)}
+        />
+        <button>Add</button>
+      </form>
+
+      {notes.map(note => (
+        <div key={note.noteId}>
+          <h4>{note.title}</h4>
+          <p>{note.content}</p>
+          <button onClick={() => deleteNote(note.noteId)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function RecommendedMentors() {
+
+  const [mentors,setMentors] = useState([]);
+
+  useEffect(()=>{
+    loadMentors();
+  },[])
+
+  const loadMentors = async ()=>{
+
+    const data = await authFetch("/student/recommended-mentors");
+
+    setMentors(data);
+
+  }
+
+  return(
+
+    <div>
+
+      <h2>Recommended Mentors</h2>
+
+      {mentors.map(m =>(
+
+        <div key={m.mentorId}>
+
+          <h3>{m.name}</h3>
+
+          <p>Experience: {m.experienceYears} years</p>
+
+          <p>Skill Level: {m.proficiencyLevel}</p>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  )
+
+import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function RecommendedMentors() {
+
+  const [mentors,setMentors] = useState([]);
+
+  useEffect(()=>{
+    loadMentors();
+  },[])
+
+  const loadMentors = async ()=>{
+
+    const data = await authFetch("/student/recommended-mentors");
+
+    setMentors(data);
+
+  }
+
+  return(
+
+    <div>
+
+      <h2>Recommended Mentors</h2>
+
+      {mentors.map(m =>(
+
+        <div key={m.mentorId}>
+
+          <h3>{m.name}</h3>
+
+          <p>Experience: {m.experienceYears} years</p>
+
+          <p>Skill Level: {m.proficiencyLevel}</p>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  )
+
+}
+import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function Reflection() {
+  const [reflections, setReflections] = useState([]);
+  const [mood, setMood] = useState("Good");
+
+  useEffect(() => {
+    loadReflections();
+  }, []);
+
+  const loadReflections = async () => {
+    const data = await authFetch("/student/reflection");
+    setReflections(data);
+  };
+
+  const addReflection = async () => {
+    await authFetch("/student/reflection", {
+      method: "POST",
+      body: JSON.stringify({
+        mood,
+        challenges: "None",
+        improvementPlan: "Stay consistent"
+      })
+    });
+
+    loadReflections();
+  };
+
+  return (
+    <div>
+      <h3>Daily Reflection</h3>
+
+      <select value={mood} onChange={e => setMood(e.target.value)}>
+        <option>Good</option>
+        <option>Average</option>
+        <option>Bad</option>
+      </select>
+
+      <button onClick={addReflection}>Submit</button>
+
+      {reflections.map(r => (
+        <div key={r.reflectionId}>
+          <p>{r.date} - {r.mood}</p>
+        </div>
+      ))}
+    </div>
+  );
+}import { useEffect, useState } from "react";
+import { getStudentDashboard } from "../../services/studentApi";
+import { FaCheckCircle, FaClock, FaBookOpen, FaChartLine } from "react-icons/fa";
+import "./StudentDashboard.css";
+
+export default function StudentDashboard() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    const res = await getStudentDashboard();
+    console.log("Dashboard Data:", res);
+    setData(res);
+  };
+
+  if (!data) return <p className="loading">Loading dashboard...</p>;
+
+  return (
+    <div className="dashboard">
+
+      <div className="dashboard-header">
+        <h2>Hello 👋 {data.profile.name}</h2>
+        <p>Track your progress and stay productive.</p>
+      </div>
+
+      {/* Stats Cards */}
+
+      <div className="stats">
+
+        <Card
+          icon={<FaCheckCircle />}
+          title="Completed Tasks"
+          value={data.completedTasks}
+        />
+
+        <Card
+          icon={<FaClock />}
+          title="Pending Tasks"
+          value={data.pendingTasks}
+        />
+
+        <Card
+          icon={<FaBookOpen />}
+          title="Study Minutes"
+          value={data.studyMinutesToday}
+        />
+
+        <Card
+          icon={<FaChartLine />}
+          title="Productivity Score"
+          value={data.productivityScore}
+        />
+
+      </div>
+
+      {/* Bottom Widgets */}
+
+      <div className="dashboard-widgets">
+
+        <div className="widget">
+          <h3>Today's Tasks</h3>
+          <p>You have {data.pendingTasks} pending tasks today.</p>
+        </div>
+
+        <div className="widget">
+          <h3>Study Progress</h3>
+          <p>Keep studying to increase your productivity score.</p>
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
+
+function Card({ icon, title, value }) {
+  return (
+    <div className="card">
+      <div className="card-icon">{icon}</div>
+
+      <div>
+        <h4>{title}</h4>
+        <p>{value ?? 0}</p>
+      </div>
+    </div>
+  );
+}import { useState } from "react";
+import { submitFeedback } from "../../services/studentFeedbackApi";
+
+export default function StudentFeedback({ mentorId }) {
+  const [rating, setRating] = useState(5);
+  const [comments, setComments] = useState("");
+
+  const submit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await submitFeedback({
+        mentorId,
+        rating: Number(rating),
+        comments
+      });
+
+      alert("Feedback submitted");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  return (
+    <form onSubmit={submit}>
+      <h4>Mentor Feedback</h4>
+
+      <select value={rating} onChange={e => setRating(e.target.value)}>
+        {[1,2,3,4,5].map(n => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
+
+      <textarea
+        placeholder="Optional comments"
+        value={comments}
+        onChange={e => setComments(e.target.value)}
+      />
+
+      <button>Submit</button>
+    </form>
+  );
+}import { useEffect, useState } from "react";
+import { getStudentProfile, saveStudentProfile } from "../../services/studentApi";
+import { useNavigate } from "react-router-dom";
+import "./StudentProfile.css";
+
+export default function StudentProfile() {
+  const [course, setCourse] = useState("");
+  const [semester, setSemester] = useState("");
+  const [university, setUniversity] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getStudentProfile().then(p => {
+      setCourse(p.course || "");
+      setSemester(p.semester || "");
+      setUniversity(p.university || "");
+    });
+  }, []);
+
+  const submit = async e => {
+    e.preventDefault();
+    await saveStudentProfile({
+      course,
+      semester: Number(semester),
+      university
+    });
+    navigate("/student-dashboard");
+  };
+
+  return (
+    <div className="student-profile-page">
+      <div className="student-profile-card">
+        <h2>Student Profile</h2>
+        <form onSubmit={submit}>
+          <input placeholder="Course" value={course} onChange={e => setCourse(e.target.value)} />
+          <input type="number" placeholder="Semester" value={semester} onChange={e => setSemester(e.target.value)} />
+          <input placeholder="University" value={university} onChange={e => setUniversity(e.target.value)} />
+          <button>Save</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+import { useState } from "react";
+import { authFetch } from "../../services/authService";
+
+export default function StudyTimer() {
+  const [sessionId, setSessionId] = useState(null);
+  const [seconds, setSeconds] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
+
+  const start = async () => {
+    const session = await authFetch("/study-sessions/start", { method: "POST" });
+    setSessionId(session.sessionId);
+
+    const id = setInterval(() => {
+      setSeconds(prev => prev + 1);
+    }, 1000);
+
+    setIntervalId(id);
+  };
+
+  const stop = async () => {
+    clearInterval(intervalId);
+
+    const minutes = Math.floor(seconds / 60);
+
+    await authFetch(`/study-sessions/${sessionId}/stop`, {
+      method: "PUT",
+      body: JSON.stringify(minutes)
+    });
+
+    setSeconds(0);
+    setSessionId(null);
+  };
+
+  return (
+    <div>
+      <h3>Study Timer</h3>
+      <p>{Math.floor(seconds / 60)} min</p>
+      {!sessionId ? (
+        <button onClick={start}>Start</button>
+      ) : (
+        <button onClick={stop}>Stop</button>
+      )}
+    </div>
+  );import { useEffect, useState } from "react";
+import { authFetch } from "../../services/authService";
+import "./Tasks.css";
+
+export default function Tasks() {
+  const [tasks, setTasks] = useState([]);
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
+
+  const loadTasks = async () => {
+    const data = await authFetch("/tasks");
+    setTasks(data);
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const addTask = async (e) => {
+    e.preventDefault();
+
+    await authFetch("/tasks", {
+      method: "POST",
+      body: JSON.stringify({
+        title,
+        dueDate: dueDate || null
+      })
+    });
+
+    setTitle("");
+    setDueDate("");
+    loadTasks();
+  };
+
+  const completeTask = async (id) => {
+    await authFetch(`/tasks/${id}/complete`, {
+      method: "PUT"
+    });
+
+    loadTasks();
+  };
+
+  return (
+    <div className="tasks-page">
+      <h3>My Tasks</h3>
+
+      <form onSubmit={addTask}>
+        <input
+          placeholder="Task title"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={e => setDueDate(e.target.value)}
+        />
+        <button>Add</button>
+      </form>
+
+      <ul>
+        {tasks.map(task => (
+          <li key={task.taskId}>
+            <strong>{task.title}</strong>
+            {task.status !== "Completed" && (
+              <button onClick={() => completeTask(task.taskId)}>Complete</button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+}import { useState } from "react";
+import { login } from "../services/authService";
+import { useNavigate, Link } from "react-router-dom";
+import "./Login.css";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const data = await login(email, password);
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+
+      const headers = {
+        Authorization: `Bearer ${data.token}`
+      };
+
+      // ================= STUDENT =================
+      if (data.role === "student") {
+        const r = await fetch(
+          "https://localhost:7214/api/student/has-profile",
+          { headers }
+        );
+
+        const { hasProfile } = await r.json();
+
+        navigate(
+          hasProfile ? "/student/dashboard" : "/student/profile"
+        );
+      }
+
+      // ================= MENTOR =================
+      else if (data.role === "mentor") {
+        const r = await fetch(
+          "https://localhost:7214/api/mentor/has-profile",
+          { headers }
+        );
+
+        const { hasProfile } = await r.json();
+
+        navigate(
+          hasProfile ? "/mentor/dashboard" : "/mentor/profile"
+        );
+      }
+
+      // ================= ADMIN =================
+      else if (data.role === "admin") {
+        navigate("/admin-dashboard");
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError("Invalid email or password");
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="login-card">
+        <h1 className="title">USER LOGIN</h1>
+
+        {error && <p className="error">{error}</p>}
+
+        <form onSubmit={submit}>
+          <div className="input-box">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="input-box">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button className="login-btn" type="submit">
+            LOGIN
+          </button>
+        </form>
+
+        <p className="register-link">
+          Don’t have an account? <Link to="/register">Register</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+import { useState } from "react";
+import { register } from "../services/authService";
+import { Link, useNavigate } from "react-router-dom";
+import "./Register.css";
+
+export default function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student");
+  const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const validate = () => {
+    if (!name.trim()) {
+      return "Full name is required";
+    }
+
+    if (name.trim().length < 3) {
+      return "Name must be at least 3 characters";
+    }
+
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return "Name can contain only letters and spaces";
+    }
+
+    if (!email.trim()) {
+      return "Email is required";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Enter a valid email address";
+    }
+
+    if (!password) {
+      return "Password is required";
+    }
+
+    if (password.length < 6) {
+      return "Password must be at least 6 characters";
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    if (!passwordRegex.test(password)) {
+      return "Password must contain at least one letter and one number";
+    }
+
+    if (role !== "student" && role !== "mentor") {
+      return "Invalid role selected";
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
+
+    const error = validate();
+    if (error) {
+      setMsg(error);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await register({ name, email, password, role });
+      navigate("/login");
+    } catch (err) {
+      setMsg(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="register-page">
+      <div className="register-card">
+        <h2>REGISTER</h2>
+
+        {msg && <p className="error-text">{msg}</p>}
+
+        <form onSubmit={handleSubmit} noValidate>
+          <input
+            placeholder="Full Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+
+          <select value={role} onChange={e => setRole(e.target.value)}>
+            <option value="student">Student</option>
+            <option value="mentor">Mentor</option>
+          </select>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Registering..." : "REGISTER"}
+          </button>
+        </form>
+
+        <p>
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </div>
+    </div>
+  );
+}export function setAuth(token, role) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", role);
+}
+
+export function getToken() {
+  return localStorage.getItem("token");
+}
+
+export function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+}
+
+export function isLoggedIn() {
+  return !!localStorage.getItem("token");
+}
+
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+/* ================= STUDENT ================= */
+import StudentLayout from "./pages/StudentDashboard/StudentLayout";
+import StudentDashboard from "./pages/StudentDashboard/StudentDashboard";
+import StudentProfile from "./pages/StudentDashboard/StudentProfile";
+import Tasks from "./pages/StudentDashboard/Tasks";
+import StudyTimer from "./pages/StudentDashboard/StudyTimer";
+import MentorDiscovery from "./pages/StudentDashboard/MentorDiscovery";
+import RecommendedMentors from "./pages/StudentDashboard/RecommendedMentors";
+import StudentFeedback from "./pages/StudentDashboard/StudentFeedback";
+import WeeklyMonthlyAnalytics from "./pages/StudentDashboard/WeeklyMonthlyAnalytics";
+import Exams from "./pages/StudentDashboard/Exams";
+import Assignments from "./pages/StudentDashboard/Assignments";
+import Notes from "./pages/StudentDashboard/Notes";
+import Materials from "./pages/StudentDashboard/Materials";
+import Goals from "./pages/StudentDashboard/Goals";
+import Reflection from "./pages/StudentDashboard/Reflection";
+
+/* ================= MENTOR ================= */
+import MentorLayout from "./pages/MentorDashboard/MentorLayout";
+import MentorDashboard from "./pages/MentorDashboard/MentorDashboard";
+import MentorProfile from "./pages/MentorDashboard/MentorProfile";
+import MentorRequests from "./pages/MentorDashboard/MentorRequests";
+import MentorStudents from "./pages/MentorDashboard/MentorStudents";
+import MentorSessions from "./pages/MentorDashboard/MentorSessions";
+import MentorAssignments from "./pages/MentorDashboard/MentorAssignments";
+import MentorAvailability from "./pages/MentorDashboard/MentorAvailability";
+import MentorFeedback from "./pages/MentorDashboard/MentorFeedback";
+import MentorAnalytics from "./pages/MentorDashboard/MentorAnalytics";
+
+/* ================= ADMIN ================= */
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+
+/* ================= PRIVATE ROUTE ================= */
+function PrivateRoute({ children }) {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/login" replace />;
+}
+
+/* ================= APP ================= */
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+
+        {/* Default Redirect */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* ================= STUDENT ROUTES (NESTED) ================= */}
+       <Route
+  path="/student"
+  element={
+    <PrivateRoute>
+      <StudentLayout />
+    </PrivateRoute>
+  }
+>
+  <Route index element={<Navigate to="dashboard" replace />} />
+
+  <Route path="dashboard" element={<StudentDashboard />} />
+  <Route path="profile" element={<StudentProfile />} />
+  <Route path="tasks" element={<Tasks />} />
+  <Route path="study" element={<StudyTimer />} />
+  <Route path="analytics" element={<WeeklyMonthlyAnalytics />} />
+  <Route path="mentordiscovery" element={<MentorDiscovery/>}/>
+<Route path="recommended-mentors" element={<RecommendedMentors />} />
+  <Route path="exams" element={<Exams />} />
+  <Route path="assignments" element={<Assignments />} />
+  <Route path="notes" element={<Notes />} />
+  <Route path="materials" element={<Materials />} />
+  <Route path="goals" element={<Goals />} />
+  <Route path="reflection" element={<Reflection />} />
+</Route>
+
+        {/* ================= MENTOR ROUTES (NESTED) ================= */}
+        <Route
+          path="/mentor"
+          element={
+            <PrivateRoute>
+              <MentorLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<MentorDashboard />} />
+          <Route path="profile" element={<MentorProfile />} />
+          <Route path="requests" element={<MentorRequests />} />
+          <Route path="students" element={<MentorStudents />} />
+          <Route path="sessions" element={<MentorSessions />} />
+          <Route path="assignments" element={<MentorAssignments />} />
+          <Route path="availability" element={<MentorAvailability />} />
+          <Route path="feedback" element={<MentorFeedback />} />
+          <Route path="analytics" element={<MentorAnalytics />} />
+        </Route>
+
+        {/* ================= ADMIN ================= */}
+        <Route
+          path="/admin-dashboard"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+
+      </Routes>
+    </BrowserRouter>
+  );
+}

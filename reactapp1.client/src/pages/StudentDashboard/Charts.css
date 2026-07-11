@@ -1,0 +1,11 @@
+.charts {
+  display: flex;
+  gap: 20px;
+}
+
+.chart-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}

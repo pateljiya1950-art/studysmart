@@ -1,0 +1,310 @@
+/* ============================================================
+   StudyTimer.css  –  Premium Pomodoro Timer UI
+   Pure CSS, no Tailwind dependency
+   ============================================================ */
+
+/* ── SHELL ──────────────────────────────────────────────────── */
+.st {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 48px;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.st-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.st-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.st-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
+/* Live badge */
+.st-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #10b981;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.st-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+/* ── STATS STRIP ─────────────────────────────────────────────── */
+.st-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 500px) { .st-stats { grid-template-columns: 1fr; } }
+
+.st-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.st-stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.st-stat-icon--indigo  { background: #eef2ff; color: #6366f1; }
+.st-stat-icon--emerald { background: #ecfdf5; color: #10b981; }
+.st-stat-icon--orange  { background: #fff7ed; color: #f97316; }
+
+.st-stat-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.st-stat-lbl {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin: 3px 0 0;
+}
+
+/* ── TIMER CARD ──────────────────────────────────────────────── */
+.st-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 36px 28px 28px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(79,70,229,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.st-goal-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+/* ── SVG RING ────────────────────────────────────────────────── */
+.st-ring-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+.st-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* start from top */
+}
+
+.st-ring-track {
+  fill: none;
+  stroke: #f1f5f9;
+  stroke-width: 10;
+}
+.st-ring-progress {
+  fill: none;
+  stroke: #e2e8f0;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.9s ease, stroke 0.4s ease;
+}
+.st-ring-progress--active {
+  stroke: url(#ringGrad);
+  /* fallback for browsers that don't support SVG gradient on stroke */
+  stroke: #6366f1;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,0.4));
+}
+
+/* center text */
+.st-ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.st-time {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.st-time-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── CONTROLS ────────────────────────────────────────────────── */
+.st-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.st-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.st-btn--start {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.38);
+}
+.st-btn--start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.45);
+}
+
+.st-btn--stop {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(244,63,94,0.38);
+}
+.st-btn--stop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(244,63,94,0.45);
+}
+
+.st-btn--reset {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 14px;
+  font-size: 14px;
+}
+.st-btn--reset:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  transform: rotate(30deg);
+}
+
+.st-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ── RESULT BANNER ───────────────────────────────────────────── */
+.st-result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #065f46;
+  font-weight: 500;
+}
+.st-result-icon {
+  color: #10b981;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.st-result strong { font-weight: 700; color: #047857; }
+
+/* ── TIPS ────────────────────────────────────────────────────── */
+.st-tips {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #f1f5f9;
+  padding: 20px 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.st-tips-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 14px;
+}
+.st-tips-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 480px) { .st-tips-grid { grid-template-columns: 1fr; } }
+
+.st-tip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+.st-tip-emoji {
+  font-size: 18px;
+  flex-shrink: 0;
+}
