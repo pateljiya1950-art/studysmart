@@ -38,7 +38,21 @@ namespace ReactApp1.Server.Controllers
         private async Task<int> GetStudentId()
         {
             var student = await _context.Students
-                .FirstAsync(s => s.UserId == UserId);
+                .FirstOrDefaultAsync(s => s.UserId == UserId);
+
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = "General",
+                    Semester = 1,
+                    University = "Not Specified",
+                    CreatedBy = UserId
+                };
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+            }
 
             return student.StudentId;
         }

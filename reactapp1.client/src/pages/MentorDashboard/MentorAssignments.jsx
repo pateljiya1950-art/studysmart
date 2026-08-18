@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMentorAssignments, createMentorAssignment, getMentorAssignmentSubmissions, deleteMentorAssignment } from "../../services/examAssignmentApi";
 
+// Base URL for file downloads (strips /api suffix to get the host)
+const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || "https://localhost:7214";
+
 /* ── helpers ── */
 function fmt(dt) {
   if (!dt) return "—";
@@ -308,7 +311,7 @@ export default function MentorAssignments() {
                                 </div>
                                 {sub.filePath ? (
                                   <a
-                                    href={`https://localhost:7214${sub.filePath}`}
+                                    href={`${API_BASE}${sub.filePath}`}
                                     target="_blank"
                                     rel="noreferrer"
                                     style={styles.btnDownload}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "../services/authService";
+import { login, authFetch } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import "./Login.css";
 
@@ -20,16 +20,17 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 
-      const headers = { Authorization: `Bearer ${data.token}` };
-
+      // Store token first so authFetch can read it
       if (data.role === "student") {
-        const r = await fetch("https://localhost:7214/api/student/has-profile", { headers });
-        const { hasProfile } = await r.json();
-        navigate(hasProfile ? "/student/dashboard" : "/student/profile");
+        const r = await authFetch("/student/has-profile", {
+          headers: { Authorization: `Bearer ${data.token}` }
+        });
+        navigate(r?.hasProfile ? "/student/dashboard" : "/student/profile");
       } else if (data.role === "mentor") {
-        const r = await fetch("https://localhost:7214/api/mentor/has-profile", { headers });
-        const { hasProfile } = await r.json();
-        navigate(hasProfile ? "/mentor/dashboard" : "/mentor/profile");
+        const r = await authFetch("/mentor/has-profile", {
+          headers: { Authorization: `Bearer ${data.token}` }
+        });
+        navigate(r?.hasProfile ? "/mentor/dashboard" : "/mentor/profile");
       } else if (data.role === "admin") {
         navigate("/admin-dashboard");
       }

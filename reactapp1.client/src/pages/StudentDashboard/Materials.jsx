@@ -3,6 +3,9 @@ import { authFetch } from "../../services/authService";
 import { FaFileAlt, FaFilePdf, FaFileWord, FaFileImage, FaTrash, FaPlus, FaLink, FaFolderOpen, FaExternalLinkAlt, FaUpload, FaDownload } from "react-icons/fa";
 import "./Materials.css";
 
+// Base API URL for serving uploaded files
+const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || "https://localhost:7214";
+
 // Helper to pick an icon based on file extension in path
 function getFileIcon(path) {
   const p = (path || "").toLowerCase();
@@ -207,7 +210,7 @@ export default function Materials() {
                           <FaExternalLinkAlt /> Open Link
                         </a>
                       ) : (
-                        <a href={`https://localhost:7214${m.filePath}`} target="_blank" rel="noreferrer" className="mt-btn-action mt-btn-download">
+                        <a href={`${API_BASE}${m.filePath}`} target="_blank" rel="noreferrer" className="mt-btn-action mt-btn-download">
                           <FaDownload /> Download File
                         </a>
                       )}

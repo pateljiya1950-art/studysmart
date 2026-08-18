@@ -37,8 +37,20 @@ namespace ReactApp1.Server.Controllers
         [HttpGet("mentors/{skillId}")]
         public async Task<IActionResult> GetMentors(int skillId)
         {
-            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == UserId);
-            if (student == null) return Unauthorized();
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == UserId);
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = "General",
+                    Semester = 1,
+                    University = "Not Specified",
+                    CreatedBy = UserId
+                };
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+            }
 
             var studentId = student.StudentId;
 
@@ -127,8 +139,20 @@ namespace ReactApp1.Server.Controllers
         [HttpGet("my-mentors")]
         public async Task<IActionResult> GetMyMentors()
         {
-            var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.UserId == UserId);
-            if (student == null) return Unauthorized();
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == UserId);
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = "General",
+                    Semester = 1,
+                    University = "Not Specified",
+                    CreatedBy = UserId
+                };
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+            }
 
             // Enrolled mentors
             var enrolledIds = await _context.MentorStudents

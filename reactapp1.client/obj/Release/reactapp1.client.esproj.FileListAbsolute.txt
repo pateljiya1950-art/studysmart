@@ -1,1 +1,2 @@
 D:\project\ReactApp1\reactapp1.client\obj\Release\reactapp1.client.esproj.CoreCompileInputs.cache
+D:\sem_6_Project\ReactApp1\reactapp1.client\obj\Release\reactapp1.client.esproj.CoreCompileInputs.cache

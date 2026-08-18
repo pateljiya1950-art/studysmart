@@ -1,0 +1,57 @@
+## ── .NET ──────────────────────────────────────────────────────────────────────
+# Build outputs
+**/bin/
+**/obj/
+*.user
+*.suo
+*.ntvs*
+*.njsproj
+*.sw?
+
+# Crash dump from our custom error handler
+crash_dump.txt
+
+# User-specific files
+*.rsuser
+.vs/
+
+# Published output
+**/publish/
+
+## ── Node.js ───────────────────────────────────────────────────────────────────
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Vite build output (deploy platform builds from source)
+reactapp1.client/dist/
+reactapp1.client/dist-ssr/
+
+## ── Environment & Secrets ────────────────────────────────────────────────────
+# IMPORTANT: Never commit real .env files
+.env
+.env.local
+.env.*.local
+
+# Specific paths
+reactapp1.client/.env.production
+sessions-backend/.env
+ReactApp1.Server/appsettings.Development.json
+
+# Allow dev and example files
+!.env.example
+!.env.development
+!reactapp1.client/.env.development
+!reactapp1.client/.env.example
+!sessions-backend/.env.example
+
+## ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+## ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/

@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:63349",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "D:\\project\\ReactApp1\\ReactApp1.Server\\..\\reactapp1.client",
+"WorkingDirectory": "D:\\sem_6_Project\\ReactApp1\\ReactApp1.Server\\..\\reactapp1.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

@@ -1,7 +1,14 @@
 import axios from 'axios';
-const API = "https://localhost:7214/api";
 
-const NODE_API = "http://localhost:5000";
+// ── Base URLs from environment ──────────────────────────────────────────────
+// Set VITE_API_URL in:
+//   .env.development → http://localhost:7214/api   (local dev)
+//   .env.production  → https://<your-render-url>/api  (production)
+const API = import.meta.env.VITE_API_URL || "https://localhost:7214/api";
+
+// NODE_API is the sessions-backend (Node.js / Express).
+// In production, point this to your deployed sessions-backend URL.
+const NODE_API = import.meta.env.VITE_NODE_API_URL || "http://localhost:5000";
 
 /* ================= AUTH ================= */
 
@@ -141,3 +148,6 @@ export async function authFetch(url, options = {}) {
     return null;
   }
 }
+
+// Export NODE_API for any direct sessions-backend calls if needed
+export { NODE_API };

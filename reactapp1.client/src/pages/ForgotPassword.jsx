@@ -18,7 +18,8 @@ export default function ForgotPassword() {
     setError(""); setMessage(""); setIsLoading(true);
     try {
       const response = await forgotPasswordNode(email);
-      setMessage(response.message || response.msg || "OTP sent to your email.");
+      const otpNote = response.mockOtpCode ? ` (OTP: ${response.mockOtpCode})` : "";
+      setMessage((response.message || response.msg || "OTP sent to your email.") + otpNote);
       setStep(2);
     } catch (err) {
       setError(err.message || "Failed to send OTP");

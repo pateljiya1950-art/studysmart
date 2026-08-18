@@ -771,10 +771,12 @@ D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.bui
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.development.json
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ReactApp.139653F6.Up2Date
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ReactApp1.Server.dll
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\refint\ReactApp1.Server.dll
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ReactApp1.Server.pdb
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ReactApp1.Server.genruntimeconfig.cache
 D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ref\ReactApp1.Server.dll
+D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\ReactApp1.Server.sourcelink.json
+D:\sem_6_Project\ReactApp1\ReactApp1.Server\bin\Debug\net8.0\appsettings.Production.json
+D:\sem_6_Project\ReactApp1\ReactApp1.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

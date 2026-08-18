@@ -5,13 +5,17 @@ const cors     = require("cors");
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
-/* ─── Middleware ─────────────────────────────────────────────── */
+/* ─── CORS: read origin from environment ─────────────────────── */
+// Set CORS_ORIGIN in .env (dev) or hosting platform env vars (prod).
+// Multiple origins: CORS_ORIGIN=https://frontend.com,https://localhost:63349
+const rawOrigins = process.env.CORS_ORIGIN || "https://localhost:63349";
+const allowedOrigins = rawOrigins.split(",").map(o => o.trim());
+
 app.use(cors({
-  origin: "https://localhost:63349", // frontend URL
+  origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
 
 app.use(express.json());
 
@@ -48,7 +52,7 @@ async function startServer() {
   /* Patch controller to use in-memory store */
   require("./store").activate(store, uuidv4);
 
-  app.listen(5000, () => console.log("Server running on port 5000"));
+  app.listen(PORT, () => console.log(`✅ sessions-backend running on port ${PORT}`));
 }
 
 startServer();

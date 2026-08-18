@@ -30,18 +30,30 @@ namespace ReactApp1.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExams()
         {
-            var studentId = await _context.Students
-                .Where(s => s.UserId == UserId)
-                .Select(s => (int?)s.StudentId)
-                .FirstOrDefaultAsync();
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.UserId == UserId);
 
-            if (studentId == null) return BadRequest(new { success = false, message = "Student profile not found" });
+            if (student == null)
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = "General",
+                    Semester = 1,
+                    University = "Not Specified",
+                    CreatedBy = UserId
+                };
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+            }
+
+            int studentId = student.StudentId;
 
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
             var assignments = await _context.ExamAssignments
                 .Include(a => a.Exam)
-                .Where(a => a.StudentId == studentId.Value)
+                .Where(a => a.StudentId == studentId)
                 .OrderBy(a => a.Exam.ExamDate)
                 .Select(a => new
                 {

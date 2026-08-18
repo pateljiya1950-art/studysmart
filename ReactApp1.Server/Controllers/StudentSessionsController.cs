@@ -28,7 +28,18 @@ namespace ReactApp1.Server.Controllers
                 .FirstOrDefaultAsync(s => s.UserId == UserId);
 
             if (student == null)
-                return BadRequest("Student profile not found");
+            {
+                student = new Student
+                {
+                    UserId = UserId,
+                    Course = "General",
+                    Semester = 1,
+                    University = "Not Specified",
+                    CreatedBy = UserId
+                };
+                _context.Students.Add(student);
+                await _context.SaveChangesAsync();
+            }
 
             var sessions = await _context.MentorSessions
                 .Include(s => s.Mentor).ThenInclude(m => m.User)

@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build output
+**/bin/
+**/obj/
+**/dist/
+**/dist-ssr/
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# Node
+**/node_modules/
+
+# Environment files (never bake secrets into image)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs
+*.log
+crash_dump.txt
+
+# Test
+**/TestResults/

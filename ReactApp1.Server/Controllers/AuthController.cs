@@ -75,6 +75,18 @@ namespace ReactApp1.Server.Controllers
                 });
                 await _context.SaveChangesAsync();
             }
+            else if (role == "student")
+            {
+                _context.Students.Add(new Student
+                {
+                    UserId    = user.UserId,
+                    Course    = "General",
+                    Semester  = 1,
+                    University = "Not Specified",
+                    CreatedBy = user.UserId
+                });
+                await _context.SaveChangesAsync();
+            }
 
             return Ok("Registered successfully");
         }
@@ -124,6 +136,23 @@ namespace ReactApp1.Server.Controllers
                 signingCredentials: new SigningCredentials(
                     key, SecurityAlgorithms.HmacSha256)
             );
+            if (user.Role == "student")
+            {
+                var studentExists = await _context.Students.AnyAsync(s => s.UserId == user.UserId);
+                if (!studentExists)
+                {
+                    _context.Students.Add(new Student
+                    {
+                        UserId = user.UserId,
+                        Course = "General",
+                        Semester = 1,
+                        University = "Not Specified",
+                        CreatedBy = user.UserId
+                    });
+                    await _context.SaveChangesAsync();
+                }
+            }
+
             // react recives the token and role
             return Ok(new
             {

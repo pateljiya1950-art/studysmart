@@ -243,7 +243,19 @@ namespace ReactApp1.Server.Controllers
             {
                 int userId = GetUserId();
                 var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
-                if (student == null) return Unauthorized("Student only");
+                if (student == null)
+                {
+                    student = new Student
+                    {
+                        UserId = userId,
+                        Course = "General",
+                        Semester = 1,
+                        University = "Not Specified",
+                        CreatedBy = userId
+                    };
+                    _context.Students.Add(student);
+                    await _context.SaveChangesAsync();
+                }
 
                 var results = await _context.ExamSubmissions
                     .Include(s => s.ExamAssignment)
