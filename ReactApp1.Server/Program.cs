@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ReactApp1.Server.Models;
@@ -20,33 +19,17 @@ builder.Services.AddMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ── CORS: read allowed origins from configuration ───────────────────────────
-// In development  → appsettings.json / appsettings.Development.json
-// In production   → environment variable AllowedOrigins (comma-separated string or array keys)
-var allowedOriginsRaw = builder.Configuration["AllowedOrigins"];
-string[] allowedOrigins;
-if (!string.IsNullOrWhiteSpace(allowedOriginsRaw))
-{
-    allowedOrigins = allowedOriginsRaw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-}
-else
-{
-    allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
-        ?? new[] { "https://localhost:63349" };
-}
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.WithOrigins("https://localhost:63349")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowCredentials();   // ✅ REQUIRED
     });
 });
 
-// ── JWT ──────────────────────────────────────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
@@ -72,41 +55,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// ── Forward proxy headers (required on Render / Railway / Azure etc.) ────────
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor |
-        ForwardedHeaders.XForwardedProto;
-    // Clear known networks/proxies so the headers are always trusted on cloud
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-});
-
 try
 {
     var app = builder.Build();
 
-    // ── Forwarded headers must be first ─────────────────────────────────────
-    app.UseForwardedHeaders();
-
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    // Only redirect to HTTPS locally; in production the platform handles TLS
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseHttpsRedirection();
-    }
-
+    app.UseHttpsRedirection();
     app.UseStaticFiles(); // Enable serving files from wwwroot
     app.UseCors("AllowReact");
     app.UseAuthentication();
     app.UseAuthorization();
-
-    // ── Health-check endpoint ────────────────────────────────────────────────
-    app.MapGet("/health", () => Results.Ok(new { status = "ok", service = "StudySmart API" }))
-       .AllowAnonymous();
 
     app.MapControllers();
     app.Run();
