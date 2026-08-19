@@ -6,7 +6,7 @@ StudySmart is a modern, full-stack web application designed to connect students 
 
 ## 🌟 Live Demo & Links
 
-- 🌐 **Live Web Application**: `<TO_BE_ADDED>`
+- 🌐 **Live Web Application**: https://studysmart-gold.vercel.app/
 - 🔌 **Swagger API Documentation**: `<TO_BE_ADDED>/swagger`
 - 📘 **Deployment Guide**: [DEPLOYMENT.md](./DEPLOYMENT.md)
 - 📚 **Project Documentation**: [StudySmart Cover Document](https://github.com/user-attachments/files/31113334/StudySmart_Cover.docx)
