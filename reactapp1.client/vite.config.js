@@ -7,30 +7,49 @@ import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
 
-const baseFolder =
-    env.APPDATA !== undefined && env.APPDATA !== ''
-        ? `${env.APPDATA}/ASP.NET/https`
-        : `${env.HOME}/.aspnet/https`;
+let httpsConfig = false;
 
-const certificateName = "reactapp1.client";
-const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
-const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
+// Only setup HTTPS dev certs in local development when dotnet CLI is available
+if (env.NODE_ENV !== 'production' && !env.VERCEL && !env.NETLIFY && !env.CI) {
+    const baseFolder =
+        env.APPDATA !== undefined && env.APPDATA !== ''
+            ? `${env.APPDATA}/ASP.NET/https`
+            : `${env.HOME}/.aspnet/https`;
 
-if (!fs.existsSync(baseFolder)) {
-    fs.mkdirSync(baseFolder, { recursive: true });
-}
+    const certificateName = "reactapp1.client";
+    const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
+    const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
-    if (0 !== child_process.spawnSync('dotnet', [
-        'dev-certs',
-        'https',
-        '--export-path',
-        certFilePath,
-        '--format',
-        'Pem',
-        '--no-password',
-    ], { stdio: 'inherit', }).status) {
-        throw new Error("Could not create certificate.");
+    try {
+        if (!fs.existsSync(baseFolder)) {
+            fs.mkdirSync(baseFolder, { recursive: true });
+        }
+
+        if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
+            const res = child_process.spawnSync('dotnet', [
+                'dev-certs',
+                'https',
+                '--export-path',
+                certFilePath,
+                '--format',
+                'Pem',
+                '--no-password',
+            ], { stdio: 'inherit' });
+            if (res.status === 0 && fs.existsSync(certFilePath) && fs.existsSync(keyFilePath)) {
+                httpsConfig = {
+                    key: fs.readFileSync(keyFilePath),
+                    cert: fs.readFileSync(certFilePath),
+                };
+            }
+        } else {
+            httpsConfig = {
+                key: fs.readFileSync(keyFilePath),
+                cert: fs.readFileSync(certFilePath),
+            };
+        }
+    } catch {
+        // Fall back to HTTP if dotnet dev-certs or cert files are unavailable
+        httpsConfig = false;
     }
 }
 
@@ -59,9 +78,6 @@ export default defineConfig({
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '63349'),
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+        https: httpsConfig
     }
 })
