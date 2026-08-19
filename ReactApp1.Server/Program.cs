@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("https://localhost:63349")
+        policy.SetIsOriginAllowed(_ => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();   // ✅ REQUIRED
@@ -67,6 +67,9 @@ try
     app.UseCors("AllowReact");
     app.UseAuthentication();
     app.UseAuthorization();
+
+    app.MapGet("/", () => Results.Ok(new { status = "Healthy", service = "StudySmart API", swagger = "/swagger" }));
+    app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
     app.MapControllers();
     app.Run();
