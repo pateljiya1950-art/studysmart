@@ -24,6 +24,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReact", policy =>
     {
         policy.WithOrigins(
+            "https://studysmart-9zrpcwmyi-jiya20.vercel.app",
             "https://studysmart-gold.vercel.app",
             "https://localhost:63349",
             "http://localhost:5173"
