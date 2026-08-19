@@ -4,8 +4,13 @@ import axios from 'axios';
 // Set VITE_API_URL in:
 //   .env.development → http://localhost:7214/api   (local dev)
 //   .env.production  → https://<your-render-url>/api  (production)
-const API = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://studysmart-1-1aw1.onrender.com/api" : "https://localhost:7214/api");
+const API =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD
+    ? "https://studysmart-1-1aw1.onrender.com/api"
+    : "https://localhost:7214/api");
 
+console.log("API URL:", API);
 // NODE_API is the sessions-backend (Node.js / Express).
 // In production, point this to your deployed sessions-backend URL.
 const NODE_API = import.meta.env.VITE_NODE_API_URL || "http://localhost:5000";
