@@ -1,7 +1,7 @@
 // Base URL driven by Vite environment variable.
 // .env.development  →  VITE_API_URL=https://localhost:7214/api
 // .env.production   →  VITE_API_URL=https://<your-deployed-api-url>/api
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7214/api";
+const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://studysmart-1-1aw1.onrender.com/api" : "https://localhost:7214/api");
 
 export async function apiFetch(endpoint, options = {}) {
   const token = localStorage.getItem("token");

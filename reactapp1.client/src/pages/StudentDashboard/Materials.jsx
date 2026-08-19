@@ -4,7 +4,7 @@ import { FaFileAlt, FaFilePdf, FaFileWord, FaFileImage, FaTrash, FaPlus, FaLink,
 import "./Materials.css";
 
 // Base API URL for serving uploaded files
-const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || "https://localhost:7214";
+const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || (import.meta.env.PROD ? "https://studysmart-1-1aw1.onrender.com" : "https://localhost:7214");
 
 // Helper to pick an icon based on file extension in path
 function getFileIcon(path) {

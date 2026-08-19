@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getMentorAssignments, createMentorAssignment, getMentorAssignmentSubmissions, deleteMentorAssignment } from "../../services/examAssignmentApi";
 
 // Base URL for file downloads (strips /api suffix to get the host)
-const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || "https://localhost:7214";
+const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || (import.meta.env.PROD ? "https://studysmart-1-1aw1.onrender.com" : "https://localhost:7214");
 
 /* ── helpers ── */
 function fmt(dt) {
